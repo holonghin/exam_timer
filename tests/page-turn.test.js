@@ -24,7 +24,8 @@ function harness(randomValues = [0, .5, 1]) {
 test('poses follow scheduled start, final interval and end, including adjusted times', () => {
   const c = C.clone(C.defaults); c.start = '09:10'; c.extension = 10; const t = C.schedule(c);
   assert.equal(M.poseAt(t, t.admission), 'waiting'); assert.equal(M.poseAt(t, t.start - 1), 'waiting');
-  assert.equal(M.poseAt(t, t.start), 'reading'); assert.equal(M.poseAt(t, t.final - 1), 'reading');
+  assert.equal(M.poseAt(t, t.start), 'reading'); assert.equal(M.poseAt(t, t.handin - 1), 'reading');
+  assert.equal(M.poseAt(t, t.handin), 'relaxed'); assert.equal(M.poseAt(t, t.final - 1), 'relaxed');
   assert.equal(M.poseAt(t, t.final), 'focused'); assert.equal(M.poseAt(t, t.end - 1), 'focused');
   assert.equal(M.poseAt(t, t.end), 'finished'); assert.equal(M.poseAt(t, t.end + 10000), 'finished');
 });

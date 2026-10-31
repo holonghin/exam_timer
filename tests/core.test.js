@@ -35,12 +35,12 @@ test('combined shift and extension update every referenced time', () => {
 });
 test('changing last interval updates title and text', () => {
   const c = fresh(); c.events.final.offset = -10;
-  const s = C.stateAt(c, at('11:20:00')); assert.equal(s.title, '最後 10 分鐘'); assert.ok(s.rules.includes('考試剩下最後 10 分鐘。'));
+  const s = C.stateAt(c, at('11:20:00')); assert.equal(s.title, '最後 10 分鐘'); assert.ok(s.reminders.includes('考試剩下最後 10 分鐘。'));
 });
 test('final-stage submission instruction is an ordinary deletable rule', () => {
-  const c = fresh(); assert.equal(C.stateAt(c, at('11:25:00')).rules.length, 3);
-  c.phases.find(p => p.id === 'last').rules.splice(1, 1); const rules = C.stateAt(c, at('11:25:00')).rules;
-  assert.equal(rules.length, 2); assert.ok(rules.includes('請再次確認姓名、學號及班級。'));
+  const c = fresh(); assert.equal(C.stateAt(c, at('11:25:00')).rules.length, 2);
+  c.phases.find(p => p.id === 'last').rules.splice(0, 1); const rules = C.stateAt(c, at('11:25:00')).rules;
+  assert.equal(rules.length, 1); assert.ok(rules.includes('請再次確認姓名、學號及班級。'));
 });
 test('reminders activate at boundaries, expire, can disable and follow extension', () => {
   const c = fresh();

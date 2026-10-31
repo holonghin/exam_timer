@@ -32,7 +32,7 @@
   function syncMascot(times, instant) {
     const pose = window.ExamMascot.poseAt(times, instant);
     $('mascot-slot').dataset.state = pose;
-    pageTurner.setEnabled(pose === 'reading' && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
+    pageTurner.setEnabled(['reading', 'relaxed'].includes(pose) && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
   }
   motionPreference.addEventListener('change', () => syncMascot(C.schedule(config), now()));
   window.addEventListener('pagehide', () => pageTurner.dispose());
@@ -181,7 +181,7 @@
   const fields = ['title', 'subtitle', 'className', 'room', 'teacher', 'questionCount', 'date', 'admission', 'admissionEnabled', 'start', 'duration', 'extension', 'preparationMinutes', 'showClass', 'showRoom', 'showTeacher', 'showQuestions', 'showAttendance', 'autoScroll', 'scrollSpeed', 'mascotVisible', 'mascotAnimated'];
   function fillFields() {
     for (const name of fields) { const input = $('settings-form').elements.namedItem(name); if (input.type === 'checkbox') input.checked = draft[name]; else input.value = draft[name] ?? ''; }
-    $('template-select').value = draft.templateId;
+    document.querySelectorAll('[data-template]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.template === draft.templateId)));
     $('admission-field').hidden = !draft.admissionEnabled;
     $('preparation-field').hidden = draft.admissionEnabled;
     updateOptionalFields();
@@ -201,7 +201,8 @@
   function fillAttendance() {
     for (const key of ['expected', 'present', 'absent']) $('attendance-' + key).value = draft.attendance[key] ?? '';
     const errors = C.attendanceErrors(draft.attendance);
-    $('attendance-help').textContent = errors.length ? errors.join(' ') : '輸入任意兩欄，自動計算第三欄；以最近手動修改的兩欄為準。';
+    $('attendance-help').textContent = errors.join(' ');
+    $('attendance-help').hidden = !errors.length;
     $('attendance-help').classList.toggle('danger', !!errors.length);
   }
   for (const key of ['expected', 'present', 'absent']) $('attendance-' + key).addEventListener('input', event => {
@@ -218,7 +219,7 @@
       updatePreview(); dirtyNote();
     });
   }
-  function dirtyNote() { $('draft-note').textContent = JSON.stringify(draft) === JSON.stringify(config) ? '修改後按「套用設定」才生效。' : '有尚未套用的修改'; }
+  function dirtyNote() { $('draft-note').textContent = JSON.stringify(draft) === JSON.stringify(config) ? '' : '尚未套用'; }
   function showErrors(errors) { $('settings-errors').textContent = errors.join('\n'); $('settings-errors').hidden = !errors.length; if (errors.length) $('settings-errors').scrollIntoView({ block: 'nearest' }); }
   function openSettings() {
     draft = C.clone(config); fillFields(); renderEditors(); updatePreview(); dirtyNote(); chooseTab('general');
@@ -325,7 +326,6 @@
         if (Number.isFinite(before[id]) && before[id] !== t[id]) right.append(node('small', '', C.timeLabel(before[id], config.date) + ' →'));
         right.append(node('strong', '', C.timeLabel(t[id], draft.date))); row.append(right); target.append(row);
       }
-      for (const id of Object.keys(config.events).filter(id => !Object.hasOwn(draft.events, id))) target.append(node('p', 'help danger', '已刪除：' + C.eventName(config, id) + '（引用它的階段、規則與提醒也會移除）'));
       const errors = C.validate(draft); if (errors.length) target.append(node('p', 'help', errors.join(' ')));
     } catch { target.append(node('p', 'help', '請填入完整日期與時間，以預覽時程。')); }
   }
@@ -343,14 +343,11 @@
   }
   $('shift-back').onclick = () => customShift(-1);
   $('shift-forward').onclick = () => customShift(1);
-  function loadTemplate() {
-    draft = C.makeTemplate($('template-select').value, draft.date || config.date || C.defaults.date);
+  function loadTemplate(id) {
+    draft = C.makeTemplate(id, draft.date || config.date || C.defaults.date);
     fillFields(); renderEditors(); updatePreview(); dirtyNote(); showErrors([]);
-    toast(draft.templateId === 'blank' ? '已清空草稿；請填寫基本考試資訊後再套用。' : '模板已載入草稿；套用後生效。');
   }
-  $('template-load').onclick = loadTemplate;
-  $('template-select').onchange = loadTemplate;
-  $('reset-config').onclick = () => { draft = C.clone(C.defaults); fillFields(); renderEditors(); updatePreview(); dirtyNote(); toast('預設已載入草稿；套用後才生效。'); };
+  document.querySelectorAll('[data-template]').forEach(button => button.onclick = () => loadTemplate(button.dataset.template));
   $('export-config').onclick = () => {
     const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob), a = node('a'); a.href = url; a.download = 'exam-settings-' + config.date + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);

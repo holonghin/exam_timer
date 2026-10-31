@@ -9,6 +9,7 @@
     if (now >= times.end) return 'finished';
     if (now < times.start) return 'waiting';
     if (now >= times.final) return 'focused';
+    if (now >= times.handin) return 'relaxed';
     return 'reading';
   }
   function createPageTurner({ onTurn, onRest, random = Math.random,

@@ -45,9 +45,10 @@ test('teacher, question count, counts and visibility persist through export/impo
 });
 test('quiz has 17:30–18:20 timing, three-minute preparation and 20-minute reminder',()=>{
  const c=C.makeTemplate('quiz'),t=C.schedule(c);assert.deepEqual(C.validate(c),[]);
+ assert.equal(c.subtitle,'小考');assert.ok(!JSON.stringify(c.phases.find(p=>p.id==='finished')).includes('清點'));
  assert.equal(t.start,at('17:30:00'));assert.equal(t.end,at('18:20:00'));assert.equal(t.admission,at('17:27:00'));
  assert.equal(t.final,at('18:15:00'));assert.equal(t.half,at('18:00:00'));assert.equal(t.handin,undefined);
- assert.equal(c.admissionEnabled,false);assert.equal(c.showTeacher,false);assert.equal(c.showQuestions,false);assert.equal(c.showAttendance,false);
+ assert.equal(c.admissionEnabled,false);assert.equal(c.showRoom,false);assert.equal(c.showTeacher,false);assert.equal(c.showQuestions,false);assert.equal(c.showAttendance,false);
  assert.ok(!c.fixed.some(r=>r.id==='bathroom'));assert.ok(!JSON.stringify(c.phases).includes('背包'));
  assert.equal(C.stateAt(c,at('17:27:00')).stage.id,'entry');assert.equal(C.stateAt(c,at('17:30:00')).stage.id,'exam');
  assert.match(C.stateAt(c,at('18:00:00')).reminders[0],/20 分鐘/);

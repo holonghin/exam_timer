@@ -10,7 +10,7 @@
   const entryNotice = { id: 'entry-cover-notice', highlight: true, until: 'start', text: '考試開始前，請勿翻閱試卷內頁或提前作答，僅可閱讀封面說明。請等候監考人員宣布開始。' };
   const defaults = {
     version: 1, contentRevision: 2, title: '微積分1', subtitle: '期中考試', className: '', room: '',
-    blackboardVersion: 1, templateId: 'exam', teacher: '', questionCount: null,
+    blackboardVersion: 1, noticeVersion: 1, templateId: 'exam', teacher: '', questionCount: null,
     attendance: { expected: null, present: null, absent: null, manualOrder: [] },
     admissionEnabled: true, preparationMinutes: 3,
     showClass: true, showRoom: true, showTeacher: true, showQuestions: true, showAttendance: true,
@@ -22,7 +22,8 @@
     },
     reminders: [
       { id: 'late-reminder', at: 'late', minutes: 2, enabled: true, text: '遲到同學請先向助教登記。' },
-      { id: 'half-reminder', at: 'half', minutes: 2, enabled: true, text: '考試剩下 {halfMinutes} 分鐘，請留意作答時間。' }
+      { id: 'half-reminder', at: 'half', minutes: 2, enabled: true, text: '考試剩下 {halfMinutes} 分鐘，請留意作答時間。' },
+      { id: 'final-reminder', at: 'final', minutes: 2, enabled: true, text: '考試剩下最後 {finalMinutes} 分鐘。' }
     ],
     fixed: [
       { id: 'question', from: 'start', until: 'end', text: '有問題請舉手，等待助教協助。' },
@@ -43,7 +44,6 @@
         { text: '現在可以交卷。' }, { text: '交卷前請確認姓名、學號及班級。' }, { text: '交卷離場時請保持安靜。' }
       ] },
       { id: 'last', anchor: 'final', offset: 0, title: '最後 {finalMinutes} 分鐘', tone: 'peach', rules: [
-        { text: '考試剩下最後 {finalMinutes} 分鐘。' },
         { text: '暫停提前交卷，請等候考試結束後統一收卷。', highlight: true },
         { text: '請再次確認姓名、學號及班級。' }
       ] },
@@ -95,15 +95,16 @@
       Object.assign(c, { title: '', subtitle: '', date: '', start: '', duration: null, preparationMinutes: 0, showClass: false, showRoom: false, events: {}, phases: [], fixed: [], reminders: [] });
       return c;
     }
-    Object.assign(c, { subtitle: '隨堂測驗', start: '17:30', duration: 50, preparationMinutes: 3 });
+    Object.assign(c, { subtitle: '小考', start: '17:30', duration: 50, preparationMinutes: 3, showRoom: false });
     c.events = { half: { anchor: 'end', offset: -20, label: '剩餘20分鐘提醒' }, final: { anchor: 'end', offset: -5 } };
     c.phases = [
       { id: 'entry', anchor: 'admission', offset: 0, title: '考前準備', tone: 'peach', rules: [clone(entryNotice), { text: '請收妥與考試無關的物品，準備作答。' }, { text: '請將學生證放在桌面右上角。' }] },
       { id: 'exam', anchor: 'start', offset: 0, title: '考試進行中', tone: 'sage', rules: [{ text: '考試已開始，請安靜作答。' }, { text: '請勿與其他同學交談。' }, { text: '考試加油！' }] },
       clone(defaults.phases.find(p => p.id === 'last')), clone(defaults.phases.find(p => p.id === 'finished'))
     ];
+    c.phases.find(p => p.id === 'finished').rules = c.phases.find(p => p.id === 'finished').rules.filter(r => r.text !== '請留在座位，待助教清點並確認試卷份數後再離場。');
     c.fixed = c.fixed.filter(r => r.id !== 'bathroom');
-    c.reminders = [{ id: 'half-reminder', at: 'half', minutes: 2, enabled: true, text: '考試剩下 {halfMinutes} 分鐘，請留意作答時間。' }];
+    c.reminders = [{ id: 'half-reminder', at: 'half', minutes: 2, enabled: true, text: '考試剩下 {halfMinutes} 分鐘，請留意作答時間。' }, clone(defaults.reminders.find(r => r.id === 'final-reminder'))];
     return c;
   }
   const isUnconfigured = c => c.templateId === 'blank' && (!c.date || !c.start || !Number.isInteger(c.duration) || c.duration < 1);
@@ -154,6 +155,22 @@
       for (const p of c.phases || []) for (const r of p.rules || []) {
         if (r.id === entryNotice.id && r.text === '考試開始前，請勿翻閱試卷內頁或提前作答，僅可閱讀封面說明。請等候助教宣布開始。') r.text = entryNotice.text;
         if (r.text === '暫停提前交卷，請等候考試結束後統一收卷。' && r.highlight === undefined) r.highlight = true;
+      }
+    }
+    if (c.noticeVersion === undefined) {
+      c.noticeVersion = 1;
+      // Move only the exact old default into timed reminders. Custom/deleted rules stay so.
+      const oldFinalText = '考試剩下最後 {finalMinutes} 分鐘。';
+      if (c.events?.final && Array.isArray(c.phases) && Array.isArray(c.reminders)) {
+        const last = c.phases.find(p => p.anchor === 'final' && p.offset === 0);
+        if (last?.rules.some(r => r.text === oldFinalText)) {
+          last.rules = last.rules.filter(r => r.text !== oldFinalText);
+          if (!c.reminders.some(r => r.id === 'final-reminder')) c.reminders.push(clone(defaults.reminders.find(r => r.id === 'final-reminder')));
+        }
+      }
+      if (c.templateId === 'quiz') {
+        if (c.subtitle === '隨堂測驗') c.subtitle = '小考';
+        for (const p of c.phases || []) if (p.id === 'finished') p.rules = p.rules.filter(r => r.text !== '請留在座位，待助教清點並確認試卷份數後再離場。');
       }
     }
     return c;

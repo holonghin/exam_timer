@@ -19,6 +19,7 @@ test('all bundled scripts parse and every static element id is unique', () => {
 test('build output is synchronized with sources', () => {
   let expected = fs.readFileSync(path.join(root, 'src/index.template.html'), 'utf8');
   for (const [token, file] of [['STYLE', 'style.css'], ['CORE', 'core.js'], ['MASCOT', 'mascot.js'], ['APP', 'app.js']]) expected = expected.replace('/* INLINE_' + token + ' */', () => fs.readFileSync(path.join(root, 'src', file), 'utf8'));
+  expected = require('../scripts/inline-assets')(expected, root);
   assert.equal(html, expected);
 });
 test('visible header contains only the Chinese titles with the numeric default', () => {

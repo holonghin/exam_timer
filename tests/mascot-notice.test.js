@@ -52,7 +52,7 @@ test('bad new options and unsupported revisions are rejected', () => {
   const c = fresh(); notice(c).until = 'invalid'; assert.ok(C.validate(c).length);
 });
 test('legacy rule options are preserved as data and no longer hide phase rules', () => {
-  const c = fresh(), rule = c.phases.find(p=>p.id==='last').rules[1];
+  const c = fresh(), rule = c.phases.find(p=>p.id==='last').rules.find(r=>r.text.includes('暫停提前交卷'));
   c.holdFinal=false; rule.enabled=false; rule.condition='holdFinal'; rule.until='start';
   const restored=C.upgrade(JSON.parse(JSON.stringify(c)));
   assert.deepEqual(restored,c); assert.deepEqual(C.validate(restored),[]);

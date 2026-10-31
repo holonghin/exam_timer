@@ -31,7 +31,7 @@ test('final and half nodes can be deleted with their minute-token dependencies',
   let next = C.removeEvent(c, 'half'); next = C.removeEvent(next, 'final'); assert.deepEqual(C.validate(next), []);
   assert.equal(next.reminders.length, 1); assert.equal(next.fixed.length, 4);
   assert.equal(C.tokens(next).finalMinutes, undefined); assert.equal(C.tokens(next).halfMinutes, undefined);
-  assert.equal(M.poseAt(C.schedule(next), at('11:28:00')), 'reading');
+  assert.equal(M.poseAt(C.schedule(next), at('11:28:00')), 'relaxed');
 });
 test('all optional nodes can be removed while basic exam timing remains valid', () => {
   let c = fresh(); for (const id of Object.keys(c.events)) c = C.removeEvent(c, id);
@@ -48,7 +48,7 @@ test('custom node deletion removes referencing content and preserves end boundar
   c.reminders.push({id:'custom',at:'check',minutes:2,enabled:true,text:'確認'});
   const next = C.removeEvent(c, 'check'); assert.deepEqual(C.validate(next), []);
   assert.equal(next.phases.some(p=>p.id==='custom'),false); assert.equal(next.phases.find(p=>p.id==='finished').title,'考試結束');
-  assert.equal(next.phases[1].rules.length,4); assert.equal(next.fixed.length,4); assert.equal(next.reminders.length,2);
+  assert.equal(next.phases[1].rules.length,4); assert.equal(next.fixed.length,4); assert.equal(next.reminders.length,3);
 });
 test('invalid node identifiers, cyclic bases and dangling references are rejected', () => {
   let c = fresh(); c.events.end = {anchor:'start',offset:10}; assert.ok(C.validate(c).length);
