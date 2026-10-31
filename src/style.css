@@ -37,7 +37,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 @keyframes mascot-breathe{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-1.4px) scaleY(1.012)}}
 @keyframes mascot-nod{0%,69%,83%,100%{transform:rotate(0)}76%{transform:rotate(1.5deg) translateY(.6px)}}
 @keyframes mascot-blink{0%,45%,48%,77%,80%,100%{transform:scaleY(1)}46.5%,78.5%{transform:scaleY(.08)}}
-/* A sheet travels ONCE from the reader's right to left. It disappears after landing;
+/* A sheet travels ONCE from screen right to left about the spine. It disappears after landing;
    resetting it for the next sheet happens while hidden, never visibly backwards. */
 @keyframes mascot-page-turn{0%{transform:translateY(0) scaleX(1);opacity:1}45%{transform:translateY(-5px) scaleX(.08);opacity:1}55%{transform:translateY(-5px) scaleX(-.08);opacity:1}96%{transform:translateY(0) scaleX(-1);opacity:1}100%{transform:translateY(0) scaleX(-1);opacity:0}}
 @keyframes mascot-wave{0%,61%,100%{transform:translate(0,-8px) rotate(-12deg)}68%,82%{transform:translate(0,-9px) rotate(-29deg)}75%,89%{transform:translate(0,-8px) rotate(-8deg)}}
@@ -56,3 +56,21 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 .extra-timepoints>span{background:#f0f3e8;border-radius:6px;padding:3px 7px}
 .event-tick{background:#a7b89a;height:10px;top:-1px}
 @media(max-width:760px){.event-row{grid-template-columns:1fr 1fr}.event-actions{justify-content:flex-start}.event-actions code{max-width:120px}}
+.brand-bookmark{width:46px;height:46px;flex-shrink:0}
+.exam-meta{max-width:62%;line-height:1.65;min-width:0}
+.exam-meta .meta-line{display:flex;gap:4px 12px;justify-content:flex-end;flex-wrap:wrap;font-size:13px}
+.meta-line>span{display:inline-block;overflow-wrap:anywhere}
+.meta-line>span:not([hidden])~span:not([hidden]):before{content:'·';margin-right:12px;color:#a3aa9a}
+.exam-meta .statistics{color:#5f7058;font-size:13px;margin-top:2px}
+.template-picker{display:flex;gap:12px;align-items:flex-end;margin-bottom:8px}
+.template-picker>label{flex:1}.template-picker>button{white-space:nowrap}
+.attendance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.attendance-toggle{margin-top:18px}.settings-block .field-grid .check{margin-bottom:9px}
+.optional-field .check{margin-bottom:7px}
+.dialog-content .muted-field{color:#a1a69a}.dialog-content input:disabled{background:#f0f1ec!important;color:#a1a69a!important;border-color:#e0e3d9!important;cursor:default}
+.settings-block .field-grid input[type=number]{max-width:none}
+.shift-row>label{width:90px}.shift-row input{width:100%}
+.timeline-section{padding-bottom:12px}
+.rule-controls .check{margin-right:auto}
+@media(max-width:1050px) and (min-width:761px){.exam-meta{max-width:58%}.exam-meta .meta-line{font-size:12px;column-gap:8px}.meta-line>span+span:before{margin-right:8px}}
+@media(max-width:760px){.exam-meta{display:block;max-width:none;line-height:1.7}.exam-meta .meta-line{justify-content:flex-start;font-size:12px}.brand-bookmark{width:42px;height:42px}.attendance-grid{grid-template-columns:1fr;gap:12px}.template-picker{flex-wrap:wrap}.timeline-section{padding-bottom:4px}}

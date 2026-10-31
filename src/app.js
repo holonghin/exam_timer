@@ -53,8 +53,16 @@
     $('mascot-slot').classList.toggle('is-still', !config.mascotAnimated);
     $('exam-title').textContent = config.title; $('exam-subtitle').textContent = config.subtitle;
     document.title = config.title + ' · ' + config.subtitle + '計時器';
-    $('exam-date').textContent = config.date.replaceAll('-', ' / ') + '（' + C.parts(C.dayEpoch(config.date)).weekday + '）';
+    $('exam-date').textContent = config.date.replaceAll('-', '/') + '（' + C.parts(C.dayEpoch(config.date)).weekday + '）';
     $('exam-class').textContent = '班別：' + (config.className || '未設定'); $('exam-room').textContent = '考場：' + (config.room || '未設定');
+    $('exam-class').hidden = !config.showClass; $('exam-room').hidden = !config.showRoom;
+    $('exam-teacher').hidden = !config.showTeacher;
+    $('exam-teacher').textContent = '老師：' + (config.teacher || '未設定');
+    const statistics = [];
+    if (config.showQuestions && config.questionCount !== null) statistics.push('共 ' + config.questionCount + ' 大題');
+    if (config.showAttendance) for (const [key, label] of [['expected', '應到'], ['present', '實到'], ['absent', '缺考']]) if (config.attendance[key] !== null) statistics.push(label + ' ' + config.attendance[key]);
+    $('exam-statistics').replaceChildren(...statistics.map(text => node('span', '', text)));
+    $('exam-statistics').hidden = !statistics.length;
     $('save-status').textContent = storageMessage;
     const t = C.schedule(config), total = t.end - t.start;
     $('exam-range').textContent = C.timeLabel(t.start, config.date) + ' — ' + C.timeLabel(t.end, config.date);
@@ -63,9 +71,6 @@
     $('handin-node').querySelector('span').firstChild.textContent = config.events.handin?.label || '可交卷';
     if (Number.isFinite(t.handin)) $('handin-node').style.left = ((t.handin - t.start) / total * 100) + '%';
     $('timeline').classList.toggle('crowded', Number.isFinite(t.handin) && ((t.handin - t.start) / total < .18 || (t.handin - t.start) / total > .82));
-    $('admission-note').textContent = C.timeLabel(t.admission, config.date) + ' 開放入場';
-    $('final-note').parentElement.hidden = !Number.isFinite(t.final);
-    if (Number.isFinite(t.final)) $('final-note').textContent = C.timeLabel(t.final, config.date) + ' ' + (config.events.final.label || '最後 ' + C.tokens(config).finalMinutes + ' 分鐘');
     const seg = $('timeline-segments'); seg.replaceChildren();
     const bounds = [t.start, t.handin, t.final, t.end].filter(Number.isFinite);
     bounds.slice(0, -1).forEach((at, i) => {
@@ -84,8 +89,15 @@
       if (!['late', 'handin', 'half', 'final'].includes(id)) extra.append(node('span', '', C.timeLabel(t[id], config.date) + ' ' + C.eventName(config, id)));
     }
     extra.hidden = !extra.childElementCount;
+    requestAnimationFrame(fitTimelineLabels);
     signature = ''; render();
   }
+  function fitTimelineLabels() {
+    if ($('handin-node').hidden) { $('timeline').classList.remove('crowded'); return; }
+    const a = $('time-start').getBoundingClientRect(), b = $('time-handin').getBoundingClientRect(), c = $('time-end').getBoundingClientRect();
+    $('timeline').classList.toggle('crowded', a.right + 12 > b.left || b.right + 12 > c.left);
+  }
+  new ResizeObserver(fitTimelineLabels).observe($('timeline'));
   function list(items, el, numbered = false) {
     let ruleNumber = 0;
     el.replaceChildren(...items.map((item, i) => {
@@ -166,13 +178,45 @@
     $('settings-errors').hidden = true;
   }
   document.querySelectorAll('[data-tab]').forEach(el => el.onclick = () => chooseTab(el.dataset.tab));
-  const fields = ['title', 'subtitle', 'className', 'room', 'date', 'admission', 'start', 'duration', 'extension', 'autoScroll', 'scrollSpeed', 'mascotVisible', 'mascotAnimated'];
+  const fields = ['title', 'subtitle', 'className', 'room', 'teacher', 'questionCount', 'date', 'admission', 'admissionEnabled', 'start', 'duration', 'extension', 'preparationMinutes', 'showClass', 'showRoom', 'showTeacher', 'showQuestions', 'showAttendance', 'autoScroll', 'scrollSpeed', 'mascotVisible', 'mascotAnimated'];
   function fillFields() {
-    for (const name of fields) { const input = $('settings-form').elements.namedItem(name); if (input.type === 'checkbox') input.checked = draft[name]; else input.value = draft[name]; }
+    for (const name of fields) { const input = $('settings-form').elements.namedItem(name); if (input.type === 'checkbox') input.checked = draft[name]; else input.value = draft[name] ?? ''; }
+    $('template-select').value = draft.templateId;
+    $('admission-field').hidden = !draft.admissionEnabled;
+    $('preparation-field').hidden = draft.admissionEnabled;
+    updateOptionalFields();
+    fillAttendance();
   }
+  function updateOptionalFields() {
+    const options = { showClass: ['className'], showRoom: ['room'], showTeacher: ['teacher'], showQuestions: ['questionCount'], showAttendance: ['attendance-expected', 'attendance-present', 'attendance-absent'] };
+    for (const [flag, names] of Object.entries(options)) {
+      const enabled = draft[flag];
+      $('settings-form').elements.namedItem(flag).closest('label').classList.toggle('muted-field', !enabled);
+      for (const name of names) {
+        const input = $('settings-form').elements.namedItem(name) || $(name);
+        input.disabled = !enabled; (input.closest('label') || input.parentElement).classList.toggle('muted-field', !enabled);
+      }
+    }
+  }
+  function fillAttendance() {
+    for (const key of ['expected', 'present', 'absent']) $('attendance-' + key).value = draft.attendance[key] ?? '';
+    const errors = C.attendanceErrors(draft.attendance);
+    $('attendance-help').textContent = errors.length ? errors.join(' ') : '輸入任意兩欄，自動計算第三欄；以最近手動修改的兩欄為準。';
+    $('attendance-help').classList.toggle('danger', !!errors.length);
+  }
+  for (const key of ['expected', 'present', 'absent']) $('attendance-' + key).addEventListener('input', event => {
+    draft.attendance = C.editAttendance(draft.attendance, key, event.target.value).value;
+    fillAttendance(); dirtyNote();
+  });
   for (const name of fields) {
     const input = $('settings-form').elements.namedItem(name);
-    input.addEventListener('input', () => { draft[name] = input.type === 'checkbox' ? input.checked : input.type === 'number' ? Number(input.value) : input.value; updatePreview(); dirtyNote(); });
+    input.addEventListener('input', () => {
+      if (name === 'questionCount') { const parsed = C.parseCount(input.value); draft[name] = Number.isNaN(parsed) ? input.value : parsed; }
+      else draft[name] = input.type === 'checkbox' ? input.checked : input.type === 'number' ? input.value === '' && name === 'duration' ? null : Number(input.value) : input.value;
+      if (name === 'admissionEnabled') { $('admission-field').hidden = !draft.admissionEnabled; $('preparation-field').hidden = draft.admissionEnabled; }
+      if (name.startsWith('show')) updateOptionalFields();
+      updatePreview(); dirtyNote();
+    });
   }
   function dirtyNote() { $('draft-note').textContent = JSON.stringify(draft) === JSON.stringify(config) ? '修改後按「套用設定」才生效。' : '有尚未套用的修改'; }
   function showErrors(errors) { $('settings-errors').textContent = errors.join('\n'); $('settings-errors').hidden = !errors.length; if (errors.length) $('settings-errors').scrollIntoView({ block: 'nearest' }); }
@@ -227,6 +271,9 @@
     p.rules.forEach((r, i) => {
       const row = node('div', 'rule-editor'); row.append(textarea(r.text, v => r.text = v, '階段規則 ' + (i + 1)));
       const controls = node('div', 'rule-controls');
+      const highlight = node('input'); highlight.type = 'checkbox'; highlight.checked = !!r.highlight;
+      highlight.onchange = () => { r.highlight = highlight.checked; dirtyNote(); };
+      const highlightLabel = node('label', 'check'); highlightLabel.append(highlight, document.createTextNode('強調這條規則')); controls.append(highlightLabel);
       const up = button('上移', () => { [p.rules[i - 1], p.rules[i]] = [p.rules[i], p.rules[i - 1]]; renderPhaseRules(p, container); dirtyNote(); }); up.disabled = i === 0;
       const down = button('下移', () => { [p.rules[i + 1], p.rules[i]] = [p.rules[i], p.rules[i + 1]]; renderPhaseRules(p, container); dirtyNote(); }); down.disabled = i === p.rules.length - 1;
       controls.append(up, down, deleteButton(p.rules, i, () => renderPhaseRules(p, container))); row.append(controls);
@@ -283,10 +330,26 @@
     } catch { target.append(node('p', 'help', '請填入完整日期與時間，以預覽時程。')); }
   }
   document.querySelectorAll('[data-shift]').forEach(b => b.onclick = () => {
-    const m = C.parseTime(draft.start) + Number(b.dataset.shift);
-    if (!Number.isFinite(m) || m < 0 || m >= 1440) { showErrors(['開考時間超出當日；請先調整日期及入場時間。']); return; }
-    draft.start = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); fillFields(); updatePreview(); dirtyNote();
+    shiftDraft(Number(b.dataset.shift) * 60);
   });
+  function shiftDraft(seconds) {
+    try { draft = C.shiftStart(draft, seconds); fillFields(); updatePreview(); dirtyNote(); }
+    catch (error) { showErrors([error.message]); }
+  }
+  function customShift(sign) {
+    const minutes = C.parseCount($('shift-minutes').value), seconds = C.parseCount($('shift-seconds').value);
+    if (!Number.isInteger(minutes) || !Number.isInteger(seconds) || minutes > 1439 || seconds > 59 || minutes * 60 + seconds === 0) { showErrors(['請輸入非負整數分鐘及 0–59 秒，合計至少 1 秒。']); return; }
+    shiftDraft(sign * (minutes * 60 + seconds));
+  }
+  $('shift-back').onclick = () => customShift(-1);
+  $('shift-forward').onclick = () => customShift(1);
+  function loadTemplate() {
+    draft = C.makeTemplate($('template-select').value, draft.date || config.date || C.defaults.date);
+    fillFields(); renderEditors(); updatePreview(); dirtyNote(); showErrors([]);
+    toast(draft.templateId === 'blank' ? '已清空草稿；請填寫基本考試資訊後再套用。' : '模板已載入草稿；套用後生效。');
+  }
+  $('template-load').onclick = loadTemplate;
+  $('template-select').onchange = loadTemplate;
   $('reset-config').onclick = () => { draft = C.clone(C.defaults); fillFields(); renderEditors(); updatePreview(); dirtyNote(); toast('預設已載入草稿；套用後才生效。'); };
   $('export-config').onclick = () => {
     const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
@@ -315,7 +378,7 @@
   $('sim-pause').onclick = () => { if (!simulation) return; const epoch = now(), speed = simulation.speed ? 0 : simulation.resumeSpeed; if (simulation.speed) simulation.resumeSpeed = simulation.speed; simulation.epoch = epoch; simulation.base = performance.now(); simulation.speed = speed; $('sim-pause').textContent = speed ? '暫停' : '播放'; render(); };
   function renderJumps() {
     $('sim-jumps').replaceChildren(); const t = C.schedule(config);
-    for (const id of C.getAnchors(config).sort((a, b) => t[a] - t[b])) $('sim-jumps').append(button(C.hhmm(t[id]) + ' ' + C.eventName(config, id), () => { if (simulationAllowed()) startSimulation(t[id], Number($('sim-speed').value)); }));
+    for (const id of C.getAnchors(config).sort((a, b) => t[a] - t[b])) $('sim-jumps').append(button(C.timeLabel(t[id], config.date) + ' ' + C.eventName(config, id), () => { if (simulationAllowed()) startSimulation(t[id], Number($('sim-speed').value)); }));
   }
   // Resolve from absolute time on every tick: background throttling cannot accumulate drift.
   document.addEventListener('visibilitychange', () => { syncMascot(C.schedule(config), now()); if (!document.hidden) render(); });
