@@ -34,7 +34,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 #mascot-slot.is-turning .mascot-page{visibility:visible;animation:mascot-page-turn 1100ms ease-in-out 1 forwards}
 .mascot-wave{transform-box:view-box;transform-origin:815px 980px}
 #mascot-slot[data-state=finished] .mascot-wave{animation:mascot-wave 7.6s ease-in-out infinite}
-.mascot-bye{font:600 63px 'Segoe UI',sans-serif;fill:#819b9b;letter-spacing:1px}
+
 #mascot-slot.is-still *{animation:none!important}
 #mascot-slot.is-still .mascot-page{visibility:hidden!important}
 #mascot-slot.is-still .mascot-blink,#mascot-slot.is-still .mascot-doze{opacity:0!important}
@@ -135,7 +135,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
     <g class="mascot-pose" data-pose="reading"><use href="#art-reading"/><g class="mascot-blink" clip-path="url(#reading-eye-window)"><use href="#art-reading-blink"/></g></g>
 <g class="mascot-pose" data-pose="relaxed"><use href="#art-relaxed"/><g class="mascot-blink" clip-path="url(#reading-eye-window)"><use href="#art-reading-blink"/></g></g>
 <g class="mascot-pose" data-pose="focused"><use href="#art-focused"/><g class="mascot-blink" clip-path="url(#reading-eye-window)"><use href="#art-reading-blink"/></g></g>
-    <g class="mascot-pose" data-pose="finished"><g transform="translate(0 -25)"><g class="mascot-wave"><use href="#art-finished-arm"/></g><use href="#art-finished-body"/><text class="mascot-bye" x="1120" y="560" text-anchor="middle">Bye Bye!</text></g></g>
+    <g class="mascot-pose" data-pose="finished"><g transform="translate(0 -25)"><g class="mascot-wave"><use href="#art-finished-arm"/></g><use href="#art-finished-body"/></g></g>
     <!-- Only this small cream sheet moves; it stays above the cover, clear of both hands. -->
     <g class="mascot-page"><path d="M615 935Q707 844 831 866L833 878Q717 858 615 944Z" fill="#fff9e9" stroke="#a99c86" stroke-width="5" stroke-linejoin="round"/><path d="M631 929Q721 864 813 872" fill="none" stroke="#e3d6ba" stroke-width="3"/></g>
   </g>
@@ -604,7 +604,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
   function syncMascot(times, instant) {
     const pose = window.ExamMascot.poseAt(times, instant);
     $('mascot-slot').dataset.state = pose;
-    pageTurner.setEnabled(['reading', 'relaxed'].includes(pose) && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
+    pageTurner.setEnabled(['reading', 'relaxed', 'focused'].includes(pose) && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
   }
   motionPreference.addEventListener('change', () => syncMascot(C.schedule(config), now()));
   window.addEventListener('pagehide', () => pageTurner.dispose());

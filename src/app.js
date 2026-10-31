@@ -32,7 +32,7 @@
   function syncMascot(times, instant) {
     const pose = window.ExamMascot.poseAt(times, instant);
     $('mascot-slot').dataset.state = pose;
-    pageTurner.setEnabled(['reading', 'relaxed'].includes(pose) && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
+    pageTurner.setEnabled(['reading', 'relaxed', 'focused'].includes(pose) && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
   }
   motionPreference.addEventListener('change', () => syncMascot(C.schedule(config), now()));
   window.addEventListener('pagehide', () => pageTurner.dispose());

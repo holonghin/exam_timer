@@ -26,7 +26,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 #mascot-slot.is-turning .mascot-page{visibility:visible;animation:mascot-page-turn 1100ms ease-in-out 1 forwards}
 .mascot-wave{transform-box:view-box;transform-origin:815px 980px}
 #mascot-slot[data-state=finished] .mascot-wave{animation:mascot-wave 7.6s ease-in-out infinite}
-.mascot-bye{font:600 63px 'Segoe UI',sans-serif;fill:#819b9b;letter-spacing:1px}
+
 #mascot-slot.is-still *{animation:none!important}
 #mascot-slot.is-still .mascot-page{visibility:hidden!important}
 #mascot-slot.is-still .mascot-blink,#mascot-slot.is-still .mascot-doze{opacity:0!important}
