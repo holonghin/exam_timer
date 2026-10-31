@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <meta name="description" content="微積分1考試計時器：即時時間、階段須知與可調整時程。可完全離線使用。">
+  <title>微積分1 · 考試計時器</title>
+  <style>/* INLINE_STYLE */</style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="flower" aria-hidden="true">✿</span><div><h1><span id="exam-title">微積分1</span><span id="exam-subtitle">期中考試</span></h1></div></div>
+      <div class="exam-meta"><span id="exam-date">2026 / 10 / 31（六）</span><div><span id="exam-class">班別：未設定</span><span class="meta-divider">·</span><span id="exam-room">考場：未設定</span></div></div>
+      <div class="header-actions"><button id="fullscreen" class="icon-button" aria-label="進入全螢幕" title="全螢幕（F）">⛶</button><button id="settings-open" class="icon-button" aria-label="開啟設定" title="設定">⚙</button></div>
+    </header>
+    <div id="simulation-banner" class="simulation-banner" hidden><strong>模擬時間 · 非即時</strong><span id="simulation-summary"></span><button id="sim-pause">暫停</button><button id="sim-exit">回到即時</button></div>
+    <main class="layout">
+      <section class="clock-card card" aria-label="考試時間與進度">
+        <div class="clock-topline"><span class="little-label"><span class="live-dot"></span><span id="clock-mode">現在時間</span></span><span id="exam-range" class="little-label"></span></div>
+        <div class="clock-main">
+          <div class="clock" role="timer" aria-label="現在時間"><span id="clock-hm">00:00</span><span id="clock-sec">00</span></div>
+          <div id="actual-date" class="actual-date" hidden></div>
+          <div id="status" class="status-pill lavender" role="status"><span class="status-dot"></span><span id="status-text">等候入場</span></div>
+          <div class="countdown-zone">
+            <div id="mascot-slot" data-state="waiting" aria-hidden="true">
+              <svg class="reading-mascot" viewBox="0 0 210 156" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                <defs><linearGradient id="mascot-cream" x1="0" y1="0" x2="0.3" y2="1"><stop stop-color="#fffefa"/><stop offset="1" stop-color="#f8efe2"/></linearGradient></defs>
+                <ellipse cx="106" cy="142" rx="92" ry="10" fill="#e9dfd3" opacity=".55"/>
+                <g stroke="#90705b" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <g class="book-stack">
+                    <path d="M23 119 60 114 74 126 36 132 22 127Z" fill="#d3e4d6"/><path d="M26 120 59 117 68 124 36 129 26 126Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M29 107 63 103 75 113 38 119 28 114Z" fill="#eac9bd"/><path d="M32 108 62 106 69 112 38 116 32 113Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M23 96 59 92 72 101 35 108 23 103Z" fill="#bfd8c5"/><path d="M27 97 58 95 66 100 35 105 27 102Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M149 122 181 116 191 125 159 132 148 128Z" fill="#ead0bd"/><path d="M153 122 181 119 187 125 159 129 153 127Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M152 109 182 105 191 113 159 120 151 116Z" fill="#cadfce"/><path d="M155 110 181 108 187 113 160 117 155 115Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M151 98 181 93 188 100 157 108 150 104Z" fill="#efcfc6"/><path d="M155 99 180 96 184 100 158 105 155 103Z" fill="#fff9e9" stroke-width="1.5"/>
+                  </g>
+                  <g class="mascot-breathe">
+                    <path d="M65 112Q57 139 80 140L132 139Q153 131 143 111Z" fill="url(#mascot-cream)"/>
+                    <g class="mascot-head">
+                      <path d="M85 35C74 21 88 14 97 24C97 11 113 15 113 26C128 19 133 31 125 37C146 46 157 69 155 94C155 116 139 128 107 129C72 131 52 118 53 95C53 69 66 44 85 35Z" fill="url(#mascot-cream)"/>
+                      <path d="M65 78Q69 53 86 45" stroke="#e9d9c9" stroke-width="4" fill="none" opacity=".65"/>
+                      <ellipse cx="79" cy="96" rx="11" ry="8" fill="#f4c6bd" stroke="none" opacity=".78"/>
+                      <ellipse cx="134" cy="94" rx="10" ry="7.5" fill="#f4c6bd" stroke="none" opacity=".78"/>
+                      <g class="mascot-eyes" fill="#75543e" stroke="none"><ellipse cx="93" cy="85" rx="4.3" ry="4.8"/><ellipse cx="124" cy="83" rx="4" ry="4.5"/></g>
+                      <g class="mascot-happy-eyes" fill="none"><path d="M89 85Q93 79 97 85M120 83Q124 77 128 83"/></g>
+                      <path d="M106 91Q110 95 114 90" fill="none" stroke-width="1.9"/>
+                    </g>
+                    <ellipse cx="83" cy="137" rx="10" ry="7" fill="#fff9ee"/>
+                    <ellipse cx="135" cy="135" rx="10" ry="7" fill="#fff9ee"/>
+                    <g class="mascot-open-book">
+                      <!-- The mascot faces us: we see the OUTSIDE covers; pages face its eyes.
+                           Its right-hand page is on the viewer's left and turns to the right. -->
+                      <path d="M83 109Q99 104 113 113Q128 104 142 108L145 136Q128 132 113 141Q96 133 81 137Z" fill="#b7d3bf"/>
+                      <path d="M86 106Q100 103 113 110Q126 103 139 105L140 110Q127 108 113 115Q100 108 85 111Z" fill="#fff9e9" stroke-width="1.6"/>
+                      <path d="M84 112Q99 109 113 116L113 139Q98 133 83 135Z" fill="#c3dcc9" stroke-width="1.4"/>
+                      <path d="M113 116Q128 109 141 111L143 134Q128 132 113 139Z" fill="#a9c9b3" stroke-width="1.4"/>
+                      <path d="M113 111V139M88 108Q100 106 111 112M116 112Q127 106 137 107" fill="none" stroke="#c1b69b" stroke-width="1"/>
+                      <path d="M128 122Q135 118 133 126Q129 129 128 122ZM128 122l-2 6" fill="#dce9d9" stroke="#87a990" stroke-width="1"/>
+                      <g class="mascot-page"><path d="M113 110Q100 103 87 104L86 110Q100 108 113 115Z" fill="#fffdf2" stroke="#cdbb9d" stroke-width="1.1"/></g>
+                    </g>
+                    <g class="mascot-closed-book">
+                      <path d="M95 105Q111 102 129 106L133 109V136L129 140Q110 136 95 140Z" fill="#fff6e3"/>
+                      <path d="M94 105Q111 102 129 106V140Q111 136 94 140Z" fill="#bdd7c4"/>
+                      <path d="M98 105V137M129 110l4-1M129 135l4 1" fill="none" stroke="#9fb8a2" stroke-width="1.2"/>
+                      <path d="M110 119Q118 113 118 122Q113 128 110 119ZM110 119l-2 8" fill="#e0ebdb" stroke="#89a28a" stroke-width="1.2"/>
+                      <ellipse cx="95" cy="125" rx="7" ry="6" fill="#fff9ee"/>
+                      <ellipse cx="131" cy="126" rx="6" ry="6" fill="#fff9ee"/>
+                    </g>
+                    <path class="mascot-reading-hand" d="M86 112Q94 107 100 114Q102 120 94 124Q85 126 82 120Q80 116 86 112Z" fill="#fff9ee"/>
+                    <ellipse class="mascot-rest-hand" cx="86" cy="124" rx="8" ry="6" fill="#fff9ee"/>
+                    <g class="mascot-hand"><path d="M144 111Q150 103 155 109Q160 115 151 122Q146 126 142 122Q139 118 144 111Z" fill="#fff9ee"/></g>
+                  </g>
+                  <g class="mascot-finish-spark" fill="none" stroke="#cfae74" stroke-width="1.8"><path d="m163 64 2-5m6 14 5-1m-18-9-3-4"/></g>
+                  <g class="mascot-focus-mark" stroke="#b99a65" stroke-width="1.4"><circle cx="164" cy="75" r="7" fill="#fbefcf"/><path d="M164 71v4l3 2" fill="none"/></g>
+                </g>
+              </svg>
+            </div>
+            <div class="countdown"><span id="countdown-label">距離考試開始</span><strong id="countdown">00:00</strong></div>
+          </div>
+        </div>
+        <div class="timeline-section">
+          <div class="timeline-caption"><span>考試進度</span><span id="progress-caption">尚未開始</span></div>
+          <div class="timeline" id="timeline" role="progressbar" aria-label="考試進度" aria-valuemin="0" aria-valuemax="100">
+            <div class="timeline-track"><div id="timeline-segments"></div><div id="timeline-elapsed"></div></div>
+            <div id="phase-ticks"></div><div id="now-marker"><span>現在</span><i></i></div>
+            <div class="timeline-node first"><i></i><span>開始<strong id="time-start"></strong></span></div>
+            <div class="timeline-node middle" id="handin-node"><i></i><span>可交卷<strong id="time-handin"></strong></span></div>
+            <div class="timeline-node last"><i></i><span>結束<strong id="time-end"></strong></span></div>
+          </div>
+          <div class="timeline-foot"><span id="admission-note"></span><span><i class="legend-dot"></i><span id="final-note"></span></span></div>
+          <div id="extra-timepoints" class="extra-timepoints" aria-label="自訂時間節點" hidden></div>
+        </div>
+      </section>
+      <aside class="rules-card card" aria-labelledby="rules-heading">
+        <div class="rules-heading"><div><span class="eyebrow">A LITTLE REMINDER</span><h2 id="rules-heading"><span aria-hidden="true">▤</span> 考試須知</h2></div><svg class="pencil-clock" viewBox="0 0 72 64" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#9c8b75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(31 25 28)"><path d="M21 10Q26 7 31 10L31 44 26 54 21 44Z" fill="#d3e3d3"/><path d="M21 16H31M26 18V43"/><path d="M21 10Q26 7 31 10V16H21Z" fill="#efd3cc"/><path d="M21 44 26 54 31 44Z" fill="#f5e5c9"/><path d="m25 51 1 3 1-3" fill="#9c8b75"/></g><circle cx="47" cy="42" r="16" fill="#fff8eb"/><circle cx="47" cy="42" r="12" stroke="#ddcfb9" stroke-width="1.2"/><path d="M47 33V42L53 45" stroke="#8ca48c" stroke-width="2"/><path d="M45 22H50M47 22V26M59 29l3-3"/><circle cx="47" cy="42" r="1.3" fill="#8ca48c" stroke="none"/><path d="m10 49-3 2m8 3-1 4" stroke="#dbbdb0"/></g></svg></div>
+        <section id="fixed-section" class="fixed-section"><h3 class="section-label">請一起遵守</h3><ul id="fixed-rules" class="fixed-rules"></ul></section>
+        <section class="current-section"><div class="section-heading"><h3 class="section-label">目前提醒</h3><span id="phase-chip"></span></div>
+          <div id="reminder-banner" class="reminder" role="status" hidden></div>
+          <div id="scroll-viewport" class="scroll-viewport" tabindex="0" aria-label="目前階段規則，可捲動閱讀"><div id="scroll-content"><ul id="stage-rules" class="stage-rules"></ul></div></div>
+          <div class="scroll-footer"><span id="scroll-hint">安心作答，慢慢來。</span><button id="scroll-toggle" class="text-button" hidden>暫停捲動</button></div>
+        </section>
+      </aside>
+    </main>
+    <footer class="page-footer"><span>一題一題，穩穩前進。<span aria-hidden="true"> ✧</span></span><span id="save-status">設定儲存在此裝置</span></footer>
+  </div>
+  <div id="toast" role="status" hidden></div>
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <form id="settings-form" novalidate>
+      <div class="dialog-head"><div><span class="eyebrow">PROCTOR’S DESK</span><h2 id="settings-title">考場設定</h2></div><button type="button" id="settings-close" class="icon-button" aria-label="關閉設定">×</button></div>
+      <nav class="tabs" aria-label="設定分類"><button type="button" class="tab active" data-tab="general" aria-pressed="true">考試資訊</button><button type="button" class="tab" data-tab="schedule" aria-pressed="false">時間調整</button><button type="button" class="tab" data-tab="rules" aria-pressed="false">規則與階段</button><button type="button" class="tab" data-tab="simulation" aria-pressed="false">模擬測試</button></nav>
+      <div class="dialog-content">
+        <section data-panel="general"><div class="field-grid">
+          <label>考試名稱<input name="title" maxlength="100" required></label><label>考試資訊<input name="subtitle" maxlength="100"></label>
+          <label>班別<input name="className" maxlength="100" placeholder="例如：一年甲班"></label><label>考場<input name="room" maxlength="100" placeholder="例如：理學院 301"></label>
+          <label>考試日期<input name="date" type="date" required></label>
+        </div><div class="settings-block"><h3>吉祥物</h3><label class="check"><input name="mascotVisible" type="checkbox">顯示看書小吉祥物</label><label class="check"><input name="mascotAnimated" type="checkbox">播放吉祥物動畫</label><p class="help">關閉動畫會保留靜態插畫。開啟系統「減少動畫」時，吉祥物保持靜止；考試結束後會換成微笑揮手的姿態。</p></div><div class="settings-block"><h3>畫面與儲存</h3><label class="check"><input name="autoScroll" type="checkbox">內容超出時，緩慢循環上捲</label><label>捲動速度（像素／秒）<input name="scrollSpeed" type="number" min="5" max="40" step="1"></label><p class="help">滑鼠移入或鍵盤焦點停在規則區時暫停；偏好減少動畫的裝置預設不自動捲動，可手動啟用。</p><div class="button-row"><button type="button" id="export-config">匯出已套用設定</button><button type="button" id="import-config">匯入設定</button><input type="file" id="import-file" accept="application/json,.json" hidden><button type="button" id="reset-config" class="danger">恢復預設（待套用）</button></div><p class="help">設定只保存在這個瀏覽器。換電腦或使用離線備援時，可匯出再匯入。</p></div></section>
+        <section data-panel="schedule" hidden><p class="panel-intro">延後開考，後續一起平移；入場不動。額外延長則獨立調整結束與相對結束的節點。</p><div class="field-grid">
+          <label>開放入場<input name="admission" type="time" required></label><label>考試開始<input name="start" type="time" required></label>
+          <label>原訂考試長度（分鐘）<input name="duration" type="number" min="1" max="1440" required></label><label>額外延長（分鐘）<input name="extension" type="number" min="0" max="1440" required></label>
+        </div><div class="button-row shift-row"><span>平移開考</span><button type="button" data-shift="-10">−10 分</button><button type="button" data-shift="-5">−5 分</button><button type="button" data-shift="5">＋5 分</button><button type="button" data-shift="10">＋10 分</button></div>
+        <div class="editor-title"><h3>時間節點</h3><button type="button" id="add-event">＋ 新增時間節點</button></div><p class="help">可新增、改名或刪除節點。正數為基準之後，負數為之前；相對入場的節點不隨開考平移。入場、開始、結束由上方基本欄位管理。刪除節點會連同引用它的階段、規則與提醒一起移除，按「套用設定」才生效。</p><div id="event-editors"></div>
+        <div class="settings-block schedule-preview"><h3>套用後的時程</h3><div id="schedule-preview"></div></div>
+        </section>
+        <section data-panel="rules" hidden><p class="panel-intro">展開階段後，直接新增、編輯或刪除規則；規則會在該階段顯示。要取消某項要求，刪除對應規則即可。</p><p class="help">時間請使用代碼，調整時程後才會連動。可用：<code>{admission} {start} {late} {handin} {half} {final} {end} {date} {finalMinutes} {halfMinutes}</code>。例如「{handin} 後才可以交卷」。</p>
+          <div class="editor-title"><h3>固定規則</h3><button type="button" id="add-fixed">＋ 新增規則</button></div><p class="help">在指定期間置頂，不參與自動捲動。自訂內容較多時，固定區可手動捲動。</p><div id="fixed-editors"></div>
+          <div class="editor-title"><h3>階段與文案</h3><button type="button" id="add-phase">＋ 新增階段</button></div><p class="help">依開始時間自動排序，持續到下一階段。結束時須保留一個階段。</p><div id="phase-editors"></div>
+          <div class="editor-title"><h3>定時提醒</h3><button type="button" id="add-reminder">＋ 新增提醒</button></div><div id="reminder-editors"></div>
+        </section>
+        <section data-panel="simulation" hidden><p class="panel-intro">先套用設定，再進行模擬。模擬中會顯示醒目標示，重新整理會自動回到即時。</p><label>模擬日期與時間（UTC+8）<input id="sim-datetime" type="datetime-local" step="1"></label><label>播放速度<select id="sim-speed"><option value="0">停在指定時間</option><option value="1" selected>1 倍速</option><option value="10">10 倍速</option><option value="60">60 倍速</option></select></label><div class="button-row"><button type="button" id="sim-start" class="primary">開始模擬</button><button type="button" id="sim-real">回到即時</button></div><h3>跳到時間節點（已套用設定）</h3><div id="sim-jumps" class="button-row"></div><p class="help">模擬不會改變電腦時間，也不會保存成下次開啟的模式。</p></section>
+        <div id="settings-errors" class="form-errors" role="alert" hidden></div>
+      </div>
+      <div class="dialog-bottom"><span id="draft-note">修改後按「套用設定」才生效。</span><button type="button" id="settings-cancel">取消</button><button type="submit" class="primary">套用設定</button></div>
+    </form>
+  </dialog>
+  <noscript>請啟用 JavaScript，才能顯示即時時間與考試階段。</noscript>
+  <script>/* INLINE_CORE */</script>
+  <script>/* INLINE_MASCOT */</script>
+  <script>/* INLINE_APP */</script>
+</body>
+</html>

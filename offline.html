@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <meta name="description" content="微積分1考試計時器：即時時間、階段須知與可調整時程。可完全離線使用。">
+  <title>微積分1 · 考試計時器</title>
+  <style>:root{color-scheme:light;--ink:#39433d;--muted:#768077;--paper:#fffefa;--line:#e8e8df;--sage:#dce9da;--rose:#f6e2df;--peach:#faebd4;--lavender:#e9e5f2;--accent:#59735e;font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;background:#f7f5f0;color:var(--ink);background-image:radial-gradient(#c5c9bc38 .8px,transparent .8px);background-size:18px 18px}button,input,select,textarea{font:inherit}button{cursor:pointer;color:inherit;border:1px solid #d9ded3;background:#fffefa;border-radius:12px;padding:10px 16px;transition:background .15s}button:hover{background:#edf2e8}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid #7c977b;outline-offset:3px}button:disabled{opacity:.45;cursor:default}[hidden]{display:none!important}h1,h2,h3,p{margin:0}ul{margin:0;padding:0;list-style:none}.app-shell{max-width:1920px;min-height:100vh;margin:auto;padding:34px 44px 18px;display:flex;flex-direction:column;gap:26px}.topbar{display:flex;align-items:center;gap:28px;min-height:70px}.brand{display:flex;gap:17px;align-items:center}.flower{font-size:53px;color:#8d9d7b;line-height:1}.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--muted);font-weight:650}.brand .eyebrow{margin-bottom:7px}h1{font-size:27px;letter-spacing:.07em;font-weight:750;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}#exam-subtitle{font-size:17px;font-weight:500;letter-spacing:.04em;color:#687264}.exam-meta{margin-left:auto;font-size:15px;line-height:1.9;text-align:right;font-weight:500;max-width:36%;overflow-wrap:anywhere}.exam-meta>div{font-size:13px;color:var(--muted)}.meta-divider{padding:0 10px}.header-actions{display:flex;gap:9px}.icon-button{padding:0;width:43px;height:43px;border-radius:50%;font-size:23px;line-height:1;background:#fffdf7;display:grid;place-items:center}.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:26px;flex:1;min-height:560px;height:calc(100vh - 183px);max-height:1050px}.card{border:1px solid var(--line);border-radius:30px;background:var(--paper);box-shadow:0 6px 25px #51643c05}.clock-card{padding:29px 34px 30px;display:flex;flex-direction:column;min-width:0;overflow:hidden;position:relative}.clock-topline{display:flex;justify-content:space-between;gap:10px}.little-label{font-size:13px;letter-spacing:.04em;color:var(--muted);display:flex;align-items:center;gap:8px}.live-dot{width:6px;height:6px;background:#849a76;border-radius:100%}.clock-main{display:flex;flex:1;min-height:280px;flex-direction:column;align-items:center;justify-content:center;padding:20px 0 30px}.clock{font-family:"Arial Rounded MT Bold","Segoe UI",system-ui,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:650;letter-spacing:-.065em;line-height:1.1;display:flex;align-items:baseline;gap:14px}.clock #clock-hm{font-size:clamp(75px,8.8vw,166px)}.clock #clock-sec{font-size:clamp(32px,3.8vw,68px);color:#8d9786;letter-spacing:-.045em;font-weight:450}.actual-date{font-size:12px;color:var(--muted);margin:6px 0 -8px}.status-pill{display:flex;gap:12px;align-items:center;margin-top:28px;padding:12px 25px;border-radius:99px;font-size:clamp(18px,1.7vw,28px);font-weight:650;max-width:100%;text-align:center}.status-dot{width:9px;height:9px;border-radius:100%;background:currentColor;flex-shrink:0}.rose{background:var(--rose);color:#955e5a}.sage{background:var(--sage);color:#4f7154}.peach{background:var(--peach);color:#8b6a39}.lavender{background:var(--lavender);color:#746784}.countdown{display:flex;align-items:center;gap:15px;margin-top:24px;color:#747d71;font-size:14px}.countdown strong{color:#4d594b;font-size:24px;letter-spacing:.07em;font-weight:550;font-variant-numeric:tabular-nums}.timeline-section{padding:0 8px}.timeline-caption{display:flex;justify-content:space-between;color:#7d8679;font-size:12px;letter-spacing:.04em;margin-bottom:54px}.timeline{position:relative;height:92px;margin:0 12px}.timeline-track{height:8px;border-radius:8px;overflow:hidden;background:#e9eee4;position:relative}.timeline-track>div{position:absolute;inset:0}#timeline-segments{display:flex}#timeline-segments>span{height:100%}#timeline-elapsed{background:#6e8762;opacity:.35;right:auto!important}.timeline-node{position:absolute;top:0;transform:translateX(-50%);font-size:14px;text-align:center}.timeline-node>i{display:block;width:12px;height:12px;border:2px solid #8d9b82;border-radius:50%;background:var(--paper);margin:-2px auto 12px}.timeline-node span{display:block;white-space:nowrap}.timeline-node strong{display:block;margin-top:5px;font-size:16px;letter-spacing:.04em;font-variant-numeric:tabular-nums}.timeline-node.first{left:0}.timeline-node.first span{transform:translateX(12px)}.timeline-node.last{left:100%}.timeline-node.last span{transform:translateX(-12px)}.phase-tick{position:absolute;top:0;width:2px;height:8px;background:#a39479;pointer-events:auto}#now-marker{position:absolute;left:0;top:-35px;transform:translateX(-50%);display:flex;align-items:center;flex-direction:column;z-index:2}#now-marker span{font-size:11px;white-space:nowrap;color:#fff;background:#6e8465;padding:4px 10px;border-radius:7px}#now-marker i{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #6e8465;margin-top:2px}.timeline-foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:18px;font-size:12px;color:var(--muted)}.timeline-foot>span{display:flex;align-items:center;gap:7px}.legend-dot{height:6px;width:6px;border-radius:50%;background:#ceb589}.rules-card{padding:28px 30px 18px;display:flex;flex-direction:column;overflow:hidden;min-width:0}.rules-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.rules-heading h2{font-size:25px;letter-spacing:.08em;margin-top:7px;font-weight:650}.rules-heading h2>span{font-size:23px;color:#9caa8c;margin-right:5px}.small-flower{color:#d9b4a6;font-size:32px;transform:rotate(15deg)}.section-label{font-size:11px;font-weight:600;letter-spacing:.13em;color:#8a9284}.fixed-section{flex-shrink:1;max-height:49%;overflow:auto;padding-bottom:23px;border-bottom:1px solid var(--line)}.fixed-rules{margin-top:13px;display:flex;flex-direction:column;gap:12px}.fixed-rules li{position:relative;padding-left:19px;font-size:clamp(16px,1.35vw,23px);line-height:1.65}.fixed-rules li:before{content:"";position:absolute;width:5px;height:5px;border-radius:100%;background:#a8b69b;left:1px;top:.7em}.current-section{padding-top:21px;display:flex;flex-direction:column;flex:1;min-height:145px}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}#phase-chip{font-size:11px;color:#7c8872;background:#eff2e8;border-radius:6px;padding:5px 8px;max-width:65%;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.scroll-viewport{flex:1;overflow-y:auto;min-height:70px;scrollbar-width:thin;scrollbar-color:#d9dfd0 transparent;overscroll-behavior:contain}.stage-rules{display:flex;flex-direction:column;gap:14px;padding-bottom:8px}.stage-rules li{position:relative;padding-left:30px;line-height:1.7;font-size:clamp(18px,1.5vw,26px);overflow-wrap:anywhere}.rule-number{position:absolute;left:0;top:.15em;font-size:11px;color:#9ba78f;letter-spacing:.03em;line-height:2.4}.scroll-footer{display:flex;justify-content:space-between;gap:5px;align-items:center;color:#929b8b;font-size:11px;padding-top:12px;min-height:31px}.text-button{background:transparent;border:0;font-size:11px;padding:4px 0;color:#687d5b}.reminder{border-left:3px solid #c89b62;background:#fbf0df;border-radius:0 8px 8px 0;padding:10px 12px;font-size:15px;line-height:1.6;margin-bottom:12px}.page-footer{display:flex;justify-content:space-between;color:#8d9585;letter-spacing:.04em;font-size:11px;padding:0 4px}.simulation-banner{background:#fff0cd;border:1px solid #d8bb74;border-radius:14px;padding:10px 18px;display:flex;align-items:center;gap:15px;font-size:13px}.simulation-banner button{padding:5px 12px;border-color:#dfc995;background:#fff8e8}.simulation-banner #sim-pause{margin-left:auto}body.simulating .layout{height:calc(100vh - 258px)}#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:13px 22px;max-width:90vw;background:#394c3c;color:white;border-radius:12px;z-index:20;box-shadow:0 6px 30px #0002;font-size:14px}
+dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96vw);max-height:92vh;background:#fafbf6;color:var(--ink);box-shadow:0 20px 90px #34482e33}dialog::backdrop{background:#35433263;backdrop-filter:blur(4px)}#settings-form{display:flex;flex-direction:column;max-height:92vh}.dialog-head{display:flex;align-items:center;justify-content:space-between;padding:24px 28px 18px}.dialog-head h2{font-size:25px;margin-top:4px}.tabs{display:flex;padding:0 28px;gap:7px;border-bottom:1px solid #dfe4d8}.tab{border:0;border-radius:9px 9px 0 0;background:transparent;font-size:14px;color:#76816c}.tab.active{background:#e5eddd;color:#435c3c;font-weight:700}.dialog-content{overflow:auto;padding:25px 28px;flex:1}.dialog-content h3{font-size:17px;margin-bottom:12px}.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.dialog-content label{display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5b6854}.dialog-content input:not([type=checkbox]),.dialog-content select,.dialog-content textarea{border:1px solid #d5ddce;border-radius:9px;padding:10px 12px;background:white;color:#3e4a38;min-width:0;width:100%;line-height:1.5}.dialog-content textarea{resize:vertical;min-height:70px}.dialog-content input[type=checkbox]{accent-color:#6d895d;width:17px;height:17px;flex-shrink:0}.dialog-content label.check{flex-direction:row;align-items:center;line-height:1.6}.emphasis{background:#eaf0df;padding:12px;border-radius:12px}.settings-block{margin-top:25px;padding:20px;border:1px solid #dfe5d6;border-radius:16px;background:#f2f5eb}.settings-block>label{margin-bottom:16px}.settings-block input[type=number]{max-width:140px}.help{font-size:12px;line-height:1.8;color:#7a8472;margin:8px 0 15px}.help code{font-family:monospace;word-break:break-word}.button-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:15px 0}.button-row button{font-size:13px}.danger{color:#a25b50}.primary{background:#617b54;border-color:#617b54;color:white}.primary:hover{background:#4e6743}.dialog-bottom{display:flex;align-items:center;gap:10px;padding:18px 28px;border-top:1px solid #dfe4d8;background:#f6f8f0}.dialog-bottom>span{margin-right:auto;font-size:12px;color:#7a8472}.panel-intro{font-size:14px;line-height:1.8;color:#65745b;margin-bottom:22px}.shift-row{margin:18px 0 28px}.shift-row>span{font-size:13px;margin-right:7px}.event-row{display:grid;grid-template-columns:130px 1fr 1fr;align-items:center;gap:15px;padding:10px 0;border-bottom:1px solid #e1e6db;font-size:14px}.preview-item{display:flex;justify-content:space-between;gap:20px;font-size:14px;padding:9px 0;border-bottom:1px solid #dfe5d6}.preview-item:last-child{border:0}.preview-item strong{font-variant-numeric:tabular-nums}.preview-item small{color:#929b88;margin-right:12px}.editor-title{display:flex;justify-content:space-between;align-items:center;margin-top:30px;margin-bottom:12px}.editor-title h3{margin:0}.editor-title button{font-size:12px;padding:7px 12px}.editor-card{background:white;border:1px solid #dbe2d3;border-radius:14px;padding:18px;margin-bottom:12px}.editor-card .field-grid{gap:12px;margin-top:12px}.editor-card .delete-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:#8b947f}.editor-card button{font-size:12px;padding:6px 10px}.editor-card summary{cursor:pointer;font-size:16px;line-height:1.6;font-weight:650;overflow-wrap:anywhere}.phase-rules{margin-top:20px}.rule-editor{border-top:1px dashed #e2e7db;padding-top:12px;margin-top:12px}.rule-controls{display:flex;gap:8px;align-items:center;margin:7px 0 12px}.rule-controls .check{margin-right:auto;font-size:11px}.form-errors{background:#ffede7;border:1px solid #ddb4a7;border-radius:12px;padding:15px;color:#975247;white-space:pre-line;line-height:1.7;margin-top:16px}.form-errors:empty{display:none}#sim-datetime{max-width:340px}#sim-speed{max-width:220px;margin-bottom:15px}[data-panel=simulation]>label{margin-bottom:18px}noscript{display:block;padding:30px;color:#a23830;text-align:center}
+@media(min-width:1600px){.app-shell{padding:45px 60px 25px;gap:30px}.layout{height:calc(100vh - 210px)}.rules-card{padding:35px 40px 25px}.clock-card{padding:35px 45px}.fixed-rules{gap:18px}.stage-rules{gap:20px}.rules-heading{margin-bottom:30px}.timeline-section{padding-bottom:10px}}
+@media(max-width:1050px){.app-shell{padding:22px 24px 15px;gap:20px}.layout{gap:18px;grid-template-columns:1.35fr 1fr}.clock-card{padding:24px}.rules-card{padding:24px 22px 16px}h1{font-size:23px;gap:8px}#exam-subtitle{font-size:15px}.flower{font-size:40px}.exam-meta{font-size:13px}.clock #clock-hm{font-size:9vw}.clock #clock-sec{font-size:3.8vw}.header-actions{gap:5px}.topbar{gap:15px}.fixed-rules li{font-size:16px}.stage-rules li{font-size:18px}.clock-main{min-height:260px}.timeline-node{font-size:12px}}
+@media(max-width:760px){.app-shell{padding:18px 14px;gap:16px}.topbar{flex-wrap:wrap;gap:12px}.brand{gap:10px;flex:1}.brand .eyebrow{font-size:8px}h1{font-size:22px}#exam-subtitle{font-size:14px}.exam-meta{order:3;width:100%;max-width:none;text-align:left;display:flex;justify-content:space-between;font-size:12px}.header-actions{margin-left:auto}.icon-button{width:38px;height:38px}.layout,body.simulating .layout{display:flex;flex-direction:column;height:auto;max-height:none;min-height:0;gap:16px}.card{border-radius:24px}.clock-card{min-height:480px;padding:23px}.clock #clock-hm{font-size:clamp(80px,19vw,125px)}.clock #clock-sec{font-size:clamp(33px,8vw,50px)}.clock-main{padding:25px 0 35px}.status-pill{font-size:19px;margin-top:20px}.countdown{margin-top:17px}.timeline-caption{margin-bottom:48px}.rules-card{min-height:420px;max-height:720px;padding:24px}.fixed-section{max-height:290px;flex-shrink:0}.current-section{min-height:180px}.scroll-viewport{max-height:260px;min-height:130px}.fixed-rules li{font-size:17px}.stage-rules li{font-size:20px}.page-footer{font-size:10px;gap:12px;line-height:1.6}.simulation-banner{flex-wrap:wrap;padding:12px;font-size:12px;gap:9px}.simulation-banner #sim-pause{margin-left:0}.dialog-head{padding:20px}.tabs{padding:0 12px;gap:0}.tab{padding:10px 8px;font-size:12px}.dialog-content{padding:20px}.field-grid{grid-template-columns:1fr}.event-row{grid-template-columns:1fr 1fr;gap:10px}.event-row>span{grid-column:1/-1}.dialog-bottom{padding:15px;flex-wrap:wrap}.dialog-bottom>span{width:100%;font-size:11px}.dialog-bottom button{flex:1}.rule-controls{flex-wrap:wrap}.timeline-foot{font-size:11px}}
+@media(min-width:761px){.app-shell{height:100dvh;min-height:600px}.topbar,.simulation-banner,.page-footer{flex-shrink:0}.layout,body.simulating .layout{height:auto;min-height:0;max-height:none}.clock-main{min-height:0}}
+@media(min-width:761px) and (max-height:850px){.app-shell{padding:22px 28px 15px;gap:18px}.topbar{min-height:60px}.clock-card{padding:22px 28px}.clock-main{padding:12px 0 14px}.clock #clock-hm{font-size:min(8.8vw,14vh)}.clock #clock-sec{font-size:min(3.8vw,6vh)}.status-pill{margin-top:16px;padding:10px 20px;font-size:20px}.countdown{margin-top:14px}.countdown strong{font-size:22px}.timeline-caption{margin-bottom:42px}.timeline{height:80px}.timeline-foot{padding-top:12px}.rules-card{padding:23px 27px 15px}.rules-heading{margin-bottom:16px}.rules-heading h2{font-size:23px}.fixed-section{padding-bottom:16px;max-height:54%}.fixed-rules{gap:8px;margin-top:10px}.fixed-rules li{font-size:16px;line-height:1.55}.current-section{padding-top:14px;min-height:95px}.section-heading{margin-bottom:12px}.stage-rules{gap:10px}.stage-rules li{font-size:18px;line-height:1.65}.scroll-footer{padding-top:8px}.reminder{font-size:13px;padding:8px 10px}}
+.timeline.crowded{height:120px}.timeline.crowded .middle>span{transform:translateY(38px)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Local SVG accents; the brand flower and existing card styling stay unchanged. */
+.pencil-clock{width:61px;height:57px;flex-shrink:0;margin-left:12px}
+.countdown-zone{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;width:100%;margin-top:16px;column-gap:10px}
+.countdown-zone .countdown{grid-column:2;grid-row:1;margin-top:0;white-space:nowrap}
+#mascot-slot{grid-column:1;grid-row:1;justify-self:start;width:min(100%,150px);pointer-events:none;user-select:none;line-height:0}
+.reading-mascot{width:100%;height:auto;overflow:visible}
+.mascot-breathe{transform-box:fill-box;transform-origin:50% 100%;animation:mascot-breathe 5.6s ease-in-out infinite}
+.mascot-head{transform-box:fill-box;transform-origin:55% 85%;animation:mascot-nod 13.2s ease-in-out infinite}
+.mascot-eyes{transform-box:fill-box;transform-origin:center;animation:mascot-blink 9.6s linear infinite}
+.mascot-page{visibility:hidden;transform-box:view-box;transform-origin:113px 112px}
+#mascot-slot.is-turning .mascot-page{visibility:visible;animation:mascot-page-turn 1100ms ease-in-out 1 forwards}
+.mascot-happy-eyes,.mascot-finish-spark,.mascot-closed-book,.mascot-rest-hand,.mascot-focus-mark{display:none}
+.mascot-hand{transform-box:fill-box;transform-origin:35% 85%}
+#mascot-slot[data-state=waiting] .mascot-open-book,#mascot-slot[data-state=waiting] .mascot-reading-hand,#mascot-slot[data-state=waiting] .mascot-hand{display:none}
+#mascot-slot[data-state=waiting] .mascot-closed-book{display:inline}
+#mascot-slot[data-state=focused] .mascot-focus-mark{display:inline}
+#mascot-slot[data-state=finished] .mascot-open-book,#mascot-slot[data-state=finished] .mascot-reading-hand{display:none}
+#mascot-slot[data-state=finished] .mascot-rest-hand{display:inline}
+#mascot-slot[data-state=finished] .mascot-eyes{display:none}
+#mascot-slot[data-state=finished] .mascot-happy-eyes,#mascot-slot[data-state=finished] .mascot-finish-spark{display:inline}
+#mascot-slot[data-state=finished] .mascot-hand{transform:translate(0,-8px) rotate(-12deg);animation:mascot-wave 7s ease-in-out infinite}
+#mascot-slot.is-still *{animation:none!important}
+#mascot-slot.is-still .mascot-page{visibility:hidden!important}
+.stage-rules li.rule-notice{padding:13px 15px;border:1px solid #e9d5b2;border-left:3px solid #c8a46c;border-radius:12px;background:#fbf1df;color:#725f40;font-size:clamp(16px,1.32vw,23px);line-height:1.8}
+.notice-label{display:block;font-size:11px;letter-spacing:.12em;font-weight:700;color:#9b7a47;margin-bottom:5px}
+@keyframes mascot-breathe{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-1.4px) scaleY(1.012)}}
+@keyframes mascot-nod{0%,69%,83%,100%{transform:rotate(0)}76%{transform:rotate(1.5deg) translateY(.6px)}}
+@keyframes mascot-blink{0%,45%,48%,77%,80%,100%{transform:scaleY(1)}46.5%,78.5%{transform:scaleY(.08)}}
+/* A sheet travels ONCE from the reader's right to left. It disappears after landing;
+   resetting it for the next sheet happens while hidden, never visibly backwards. */
+@keyframes mascot-page-turn{0%{transform:translateY(0) scaleX(1);opacity:1}45%{transform:translateY(-5px) scaleX(.08);opacity:1}55%{transform:translateY(-5px) scaleX(-.08);opacity:1}96%{transform:translateY(0) scaleX(-1);opacity:1}100%{transform:translateY(0) scaleX(-1);opacity:0}}
+@keyframes mascot-wave{0%,61%,100%{transform:translate(0,-8px) rotate(-12deg)}68%,82%{transform:translate(0,-9px) rotate(-29deg)}75%,89%{transform:translate(0,-8px) rotate(-8deg)}}
+@media(min-width:1600px){#mascot-slot{width:min(100%,180px)}}
+@media(min-width:761px) and (max-height:850px){#mascot-slot{width:min(100%,132px)}.countdown-zone{margin-top:6px}.clock-main{padding-bottom:8px}.stage-rules li.rule-notice{font-size:16px;padding:11px 13px;line-height:1.7}}
+@media(min-width:761px) and (max-height:730px){#mascot-slot{width:min(100%,110px)}.countdown-zone{margin-top:4px}.clock-main{padding-top:8px}.clock #clock-hm{font-size:min(8.8vw,13vh)}}
+@media(max-width:1050px) and (min-width:761px){.countdown-zone .countdown{flex-direction:column;gap:3px}.countdown-zone{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}}
+@media(max-width:760px){#mascot-slot{width:min(100%,90px)}.countdown-zone{margin-top:13px;column-gap:6px}.countdown-zone .countdown{flex-direction:column;gap:4px;font-size:13px}.pencil-clock{width:55px;height:52px}.stage-rules li.rule-notice{font-size:17px}}
+@media(prefers-reduced-motion:reduce){#mascot-slot *{animation:none!important}#mascot-slot .mascot-page{visibility:hidden!important}}
+@media(min-width:761px) and (max-height:650px){.clock-main{padding:4px 0}.clock #clock-hm{font-size:min(8vw,10.5vh)}.clock #clock-sec{font-size:27px}.status-pill{margin-top:4px;padding:4px 14px;font-size:16px}.countdown-zone{margin-top:2px}#mascot-slot{width:min(100%,60px)}.timeline-caption{margin-bottom:32px}.timeline:not(.crowded){height:74px}.timeline-foot{padding-top:8px}}
+.event-row{grid-template-columns:minmax(140px,1.2fr) minmax(110px,1fr) minmax(90px,.7fr) minmax(120px,1fr);gap:12px}
+.event-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.event-actions code{font-size:11px;color:#8b947f;overflow-wrap:anywhere;max-width:140px}
+.event-actions button{padding:7px 10px;font-size:12px}
+.extra-timepoints{display:flex;gap:8px;overflow-x:auto;margin-top:8px;max-width:100%;padding-bottom:3px;font-size:11px;color:var(--muted);white-space:nowrap;scrollbar-width:thin}
+.extra-timepoints>span{background:#f0f3e8;border-radius:6px;padding:3px 7px}
+.event-tick{background:#a7b89a;height:10px;top:-1px}
+@media(max-width:760px){.event-row{grid-template-columns:1fr 1fr}.event-actions{justify-content:flex-start}.event-actions code{max-width:120px}}
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="flower" aria-hidden="true">✿</span><div><h1><span id="exam-title">微積分1</span><span id="exam-subtitle">期中考試</span></h1></div></div>
+      <div class="exam-meta"><span id="exam-date">2026 / 10 / 31（六）</span><div><span id="exam-class">班別：未設定</span><span class="meta-divider">·</span><span id="exam-room">考場：未設定</span></div></div>
+      <div class="header-actions"><button id="fullscreen" class="icon-button" aria-label="進入全螢幕" title="全螢幕（F）">⛶</button><button id="settings-open" class="icon-button" aria-label="開啟設定" title="設定">⚙</button></div>
+    </header>
+    <div id="simulation-banner" class="simulation-banner" hidden><strong>模擬時間 · 非即時</strong><span id="simulation-summary"></span><button id="sim-pause">暫停</button><button id="sim-exit">回到即時</button></div>
+    <main class="layout">
+      <section class="clock-card card" aria-label="考試時間與進度">
+        <div class="clock-topline"><span class="little-label"><span class="live-dot"></span><span id="clock-mode">現在時間</span></span><span id="exam-range" class="little-label"></span></div>
+        <div class="clock-main">
+          <div class="clock" role="timer" aria-label="現在時間"><span id="clock-hm">00:00</span><span id="clock-sec">00</span></div>
+          <div id="actual-date" class="actual-date" hidden></div>
+          <div id="status" class="status-pill lavender" role="status"><span class="status-dot"></span><span id="status-text">等候入場</span></div>
+          <div class="countdown-zone">
+            <div id="mascot-slot" data-state="waiting" aria-hidden="true">
+              <svg class="reading-mascot" viewBox="0 0 210 156" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                <defs><linearGradient id="mascot-cream" x1="0" y1="0" x2="0.3" y2="1"><stop stop-color="#fffefa"/><stop offset="1" stop-color="#f8efe2"/></linearGradient></defs>
+                <ellipse cx="106" cy="142" rx="92" ry="10" fill="#e9dfd3" opacity=".55"/>
+                <g stroke="#90705b" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <g class="book-stack">
+                    <path d="M23 119 60 114 74 126 36 132 22 127Z" fill="#d3e4d6"/><path d="M26 120 59 117 68 124 36 129 26 126Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M29 107 63 103 75 113 38 119 28 114Z" fill="#eac9bd"/><path d="M32 108 62 106 69 112 38 116 32 113Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M23 96 59 92 72 101 35 108 23 103Z" fill="#bfd8c5"/><path d="M27 97 58 95 66 100 35 105 27 102Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M149 122 181 116 191 125 159 132 148 128Z" fill="#ead0bd"/><path d="M153 122 181 119 187 125 159 129 153 127Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M152 109 182 105 191 113 159 120 151 116Z" fill="#cadfce"/><path d="M155 110 181 108 187 113 160 117 155 115Z" fill="#fff9e9" stroke-width="1.5"/>
+                    <path d="M151 98 181 93 188 100 157 108 150 104Z" fill="#efcfc6"/><path d="M155 99 180 96 184 100 158 105 155 103Z" fill="#fff9e9" stroke-width="1.5"/>
+                  </g>
+                  <g class="mascot-breathe">
+                    <path d="M65 112Q57 139 80 140L132 139Q153 131 143 111Z" fill="url(#mascot-cream)"/>
+                    <g class="mascot-head">
+                      <path d="M85 35C74 21 88 14 97 24C97 11 113 15 113 26C128 19 133 31 125 37C146 46 157 69 155 94C155 116 139 128 107 129C72 131 52 118 53 95C53 69 66 44 85 35Z" fill="url(#mascot-cream)"/>
+                      <path d="M65 78Q69 53 86 45" stroke="#e9d9c9" stroke-width="4" fill="none" opacity=".65"/>
+                      <ellipse cx="79" cy="96" rx="11" ry="8" fill="#f4c6bd" stroke="none" opacity=".78"/>
+                      <ellipse cx="134" cy="94" rx="10" ry="7.5" fill="#f4c6bd" stroke="none" opacity=".78"/>
+                      <g class="mascot-eyes" fill="#75543e" stroke="none"><ellipse cx="93" cy="85" rx="4.3" ry="4.8"/><ellipse cx="124" cy="83" rx="4" ry="4.5"/></g>
+                      <g class="mascot-happy-eyes" fill="none"><path d="M89 85Q93 79 97 85M120 83Q124 77 128 83"/></g>
+                      <path d="M106 91Q110 95 114 90" fill="none" stroke-width="1.9"/>
+                    </g>
+                    <ellipse cx="83" cy="137" rx="10" ry="7" fill="#fff9ee"/>
+                    <ellipse cx="135" cy="135" rx="10" ry="7" fill="#fff9ee"/>
+                    <g class="mascot-open-book">
+                      <!-- The mascot faces us: we see the OUTSIDE covers; pages face its eyes.
+                           Its right-hand page is on the viewer's left and turns to the right. -->
+                      <path d="M83 109Q99 104 113 113Q128 104 142 108L145 136Q128 132 113 141Q96 133 81 137Z" fill="#b7d3bf"/>
+                      <path d="M86 106Q100 103 113 110Q126 103 139 105L140 110Q127 108 113 115Q100 108 85 111Z" fill="#fff9e9" stroke-width="1.6"/>
+                      <path d="M84 112Q99 109 113 116L113 139Q98 133 83 135Z" fill="#c3dcc9" stroke-width="1.4"/>
+                      <path d="M113 116Q128 109 141 111L143 134Q128 132 113 139Z" fill="#a9c9b3" stroke-width="1.4"/>
+                      <path d="M113 111V139M88 108Q100 106 111 112M116 112Q127 106 137 107" fill="none" stroke="#c1b69b" stroke-width="1"/>
+                      <path d="M128 122Q135 118 133 126Q129 129 128 122ZM128 122l-2 6" fill="#dce9d9" stroke="#87a990" stroke-width="1"/>
+                      <g class="mascot-page"><path d="M113 110Q100 103 87 104L86 110Q100 108 113 115Z" fill="#fffdf2" stroke="#cdbb9d" stroke-width="1.1"/></g>
+                    </g>
+                    <g class="mascot-closed-book">
+                      <path d="M95 105Q111 102 129 106L133 109V136L129 140Q110 136 95 140Z" fill="#fff6e3"/>
+                      <path d="M94 105Q111 102 129 106V140Q111 136 94 140Z" fill="#bdd7c4"/>
+                      <path d="M98 105V137M129 110l4-1M129 135l4 1" fill="none" stroke="#9fb8a2" stroke-width="1.2"/>
+                      <path d="M110 119Q118 113 118 122Q113 128 110 119ZM110 119l-2 8" fill="#e0ebdb" stroke="#89a28a" stroke-width="1.2"/>
+                      <ellipse cx="95" cy="125" rx="7" ry="6" fill="#fff9ee"/>
+                      <ellipse cx="131" cy="126" rx="6" ry="6" fill="#fff9ee"/>
+                    </g>
+                    <path class="mascot-reading-hand" d="M86 112Q94 107 100 114Q102 120 94 124Q85 126 82 120Q80 116 86 112Z" fill="#fff9ee"/>
+                    <ellipse class="mascot-rest-hand" cx="86" cy="124" rx="8" ry="6" fill="#fff9ee"/>
+                    <g class="mascot-hand"><path d="M144 111Q150 103 155 109Q160 115 151 122Q146 126 142 122Q139 118 144 111Z" fill="#fff9ee"/></g>
+                  </g>
+                  <g class="mascot-finish-spark" fill="none" stroke="#cfae74" stroke-width="1.8"><path d="m163 64 2-5m6 14 5-1m-18-9-3-4"/></g>
+                  <g class="mascot-focus-mark" stroke="#b99a65" stroke-width="1.4"><circle cx="164" cy="75" r="7" fill="#fbefcf"/><path d="M164 71v4l3 2" fill="none"/></g>
+                </g>
+              </svg>
+            </div>
+            <div class="countdown"><span id="countdown-label">距離考試開始</span><strong id="countdown">00:00</strong></div>
+          </div>
+        </div>
+        <div class="timeline-section">
+          <div class="timeline-caption"><span>考試進度</span><span id="progress-caption">尚未開始</span></div>
+          <div class="timeline" id="timeline" role="progressbar" aria-label="考試進度" aria-valuemin="0" aria-valuemax="100">
+            <div class="timeline-track"><div id="timeline-segments"></div><div id="timeline-elapsed"></div></div>
+            <div id="phase-ticks"></div><div id="now-marker"><span>現在</span><i></i></div>
+            <div class="timeline-node first"><i></i><span>開始<strong id="time-start"></strong></span></div>
+            <div class="timeline-node middle" id="handin-node"><i></i><span>可交卷<strong id="time-handin"></strong></span></div>
+            <div class="timeline-node last"><i></i><span>結束<strong id="time-end"></strong></span></div>
+          </div>
+          <div class="timeline-foot"><span id="admission-note"></span><span><i class="legend-dot"></i><span id="final-note"></span></span></div>
+          <div id="extra-timepoints" class="extra-timepoints" aria-label="自訂時間節點" hidden></div>
+        </div>
+      </section>
+      <aside class="rules-card card" aria-labelledby="rules-heading">
+        <div class="rules-heading"><div><span class="eyebrow">A LITTLE REMINDER</span><h2 id="rules-heading"><span aria-hidden="true">▤</span> 考試須知</h2></div><svg class="pencil-clock" viewBox="0 0 72 64" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#9c8b75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(31 25 28)"><path d="M21 10Q26 7 31 10L31 44 26 54 21 44Z" fill="#d3e3d3"/><path d="M21 16H31M26 18V43"/><path d="M21 10Q26 7 31 10V16H21Z" fill="#efd3cc"/><path d="M21 44 26 54 31 44Z" fill="#f5e5c9"/><path d="m25 51 1 3 1-3" fill="#9c8b75"/></g><circle cx="47" cy="42" r="16" fill="#fff8eb"/><circle cx="47" cy="42" r="12" stroke="#ddcfb9" stroke-width="1.2"/><path d="M47 33V42L53 45" stroke="#8ca48c" stroke-width="2"/><path d="M45 22H50M47 22V26M59 29l3-3"/><circle cx="47" cy="42" r="1.3" fill="#8ca48c" stroke="none"/><path d="m10 49-3 2m8 3-1 4" stroke="#dbbdb0"/></g></svg></div>
+        <section id="fixed-section" class="fixed-section"><h3 class="section-label">請一起遵守</h3><ul id="fixed-rules" class="fixed-rules"></ul></section>
+        <section class="current-section"><div class="section-heading"><h3 class="section-label">目前提醒</h3><span id="phase-chip"></span></div>
+          <div id="reminder-banner" class="reminder" role="status" hidden></div>
+          <div id="scroll-viewport" class="scroll-viewport" tabindex="0" aria-label="目前階段規則，可捲動閱讀"><div id="scroll-content"><ul id="stage-rules" class="stage-rules"></ul></div></div>
+          <div class="scroll-footer"><span id="scroll-hint">安心作答，慢慢來。</span><button id="scroll-toggle" class="text-button" hidden>暫停捲動</button></div>
+        </section>
+      </aside>
+    </main>
+    <footer class="page-footer"><span>一題一題，穩穩前進。<span aria-hidden="true"> ✧</span></span><span id="save-status">設定儲存在此裝置</span></footer>
+  </div>
+  <div id="toast" role="status" hidden></div>
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <form id="settings-form" novalidate>
+      <div class="dialog-head"><div><span class="eyebrow">PROCTOR’S DESK</span><h2 id="settings-title">考場設定</h2></div><button type="button" id="settings-close" class="icon-button" aria-label="關閉設定">×</button></div>
+      <nav class="tabs" aria-label="設定分類"><button type="button" class="tab active" data-tab="general" aria-pressed="true">考試資訊</button><button type="button" class="tab" data-tab="schedule" aria-pressed="false">時間調整</button><button type="button" class="tab" data-tab="rules" aria-pressed="false">規則與階段</button><button type="button" class="tab" data-tab="simulation" aria-pressed="false">模擬測試</button></nav>
+      <div class="dialog-content">
+        <section data-panel="general"><div class="field-grid">
+          <label>考試名稱<input name="title" maxlength="100" required></label><label>考試資訊<input name="subtitle" maxlength="100"></label>
+          <label>班別<input name="className" maxlength="100" placeholder="例如：一年甲班"></label><label>考場<input name="room" maxlength="100" placeholder="例如：理學院 301"></label>
+          <label>考試日期<input name="date" type="date" required></label>
+        </div><div class="settings-block"><h3>吉祥物</h3><label class="check"><input name="mascotVisible" type="checkbox">顯示看書小吉祥物</label><label class="check"><input name="mascotAnimated" type="checkbox">播放吉祥物動畫</label><p class="help">關閉動畫會保留靜態插畫。開啟系統「減少動畫」時，吉祥物保持靜止；考試結束後會換成微笑揮手的姿態。</p></div><div class="settings-block"><h3>畫面與儲存</h3><label class="check"><input name="autoScroll" type="checkbox">內容超出時，緩慢循環上捲</label><label>捲動速度（像素／秒）<input name="scrollSpeed" type="number" min="5" max="40" step="1"></label><p class="help">滑鼠移入或鍵盤焦點停在規則區時暫停；偏好減少動畫的裝置預設不自動捲動，可手動啟用。</p><div class="button-row"><button type="button" id="export-config">匯出已套用設定</button><button type="button" id="import-config">匯入設定</button><input type="file" id="import-file" accept="application/json,.json" hidden><button type="button" id="reset-config" class="danger">恢復預設（待套用）</button></div><p class="help">設定只保存在這個瀏覽器。換電腦或使用離線備援時，可匯出再匯入。</p></div></section>
+        <section data-panel="schedule" hidden><p class="panel-intro">延後開考，後續一起平移；入場不動。額外延長則獨立調整結束與相對結束的節點。</p><div class="field-grid">
+          <label>開放入場<input name="admission" type="time" required></label><label>考試開始<input name="start" type="time" required></label>
+          <label>原訂考試長度（分鐘）<input name="duration" type="number" min="1" max="1440" required></label><label>額外延長（分鐘）<input name="extension" type="number" min="0" max="1440" required></label>
+        </div><div class="button-row shift-row"><span>平移開考</span><button type="button" data-shift="-10">−10 分</button><button type="button" data-shift="-5">−5 分</button><button type="button" data-shift="5">＋5 分</button><button type="button" data-shift="10">＋10 分</button></div>
+        <div class="editor-title"><h3>時間節點</h3><button type="button" id="add-event">＋ 新增時間節點</button></div><p class="help">可新增、改名或刪除節點。正數為基準之後，負數為之前；相對入場的節點不隨開考平移。入場、開始、結束由上方基本欄位管理。刪除節點會連同引用它的階段、規則與提醒一起移除，按「套用設定」才生效。</p><div id="event-editors"></div>
+        <div class="settings-block schedule-preview"><h3>套用後的時程</h3><div id="schedule-preview"></div></div>
+        </section>
+        <section data-panel="rules" hidden><p class="panel-intro">展開階段後，直接新增、編輯或刪除規則；規則會在該階段顯示。要取消某項要求，刪除對應規則即可。</p><p class="help">時間請使用代碼，調整時程後才會連動。可用：<code>{admission} {start} {late} {handin} {half} {final} {end} {date} {finalMinutes} {halfMinutes}</code>。例如「{handin} 後才可以交卷」。</p>
+          <div class="editor-title"><h3>固定規則</h3><button type="button" id="add-fixed">＋ 新增規則</button></div><p class="help">在指定期間置頂，不參與自動捲動。自訂內容較多時，固定區可手動捲動。</p><div id="fixed-editors"></div>
+          <div class="editor-title"><h3>階段與文案</h3><button type="button" id="add-phase">＋ 新增階段</button></div><p class="help">依開始時間自動排序，持續到下一階段。結束時須保留一個階段。</p><div id="phase-editors"></div>
+          <div class="editor-title"><h3>定時提醒</h3><button type="button" id="add-reminder">＋ 新增提醒</button></div><div id="reminder-editors"></div>
+        </section>
+        <section data-panel="simulation" hidden><p class="panel-intro">先套用設定，再進行模擬。模擬中會顯示醒目標示，重新整理會自動回到即時。</p><label>模擬日期與時間（UTC+8）<input id="sim-datetime" type="datetime-local" step="1"></label><label>播放速度<select id="sim-speed"><option value="0">停在指定時間</option><option value="1" selected>1 倍速</option><option value="10">10 倍速</option><option value="60">60 倍速</option></select></label><div class="button-row"><button type="button" id="sim-start" class="primary">開始模擬</button><button type="button" id="sim-real">回到即時</button></div><h3>跳到時間節點（已套用設定）</h3><div id="sim-jumps" class="button-row"></div><p class="help">模擬不會改變電腦時間，也不會保存成下次開啟的模式。</p></section>
+        <div id="settings-errors" class="form-errors" role="alert" hidden></div>
+      </div>
+      <div class="dialog-bottom"><span id="draft-note">修改後按「套用設定」才生效。</span><button type="button" id="settings-cancel">取消</button><button type="submit" class="primary">套用設定</button></div>
+    </form>
+  </dialog>
+  <noscript>請啟用 JavaScript，才能顯示即時時間與考試階段。</noscript>
+  <script>/* Pure scheduling logic. No DOM, network, or machine-local timezone dependency. */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.ExamCore = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const MIN = 60000;
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const entryNotice = { id: 'entry-cover-notice', highlight: true, until: 'start', text: '考試開始前，請勿翻閱試卷內頁或提前作答，僅可閱讀封面說明。請等候助教宣布開始。' };
+  const defaults = {
+    version: 1, contentRevision: 2, title: '微積分1', subtitle: '期中考試', className: '', room: '',
+    date: '2026-10-31', admission: '08:45', start: '09:00', duration: 150, extension: 0,
+    autoScroll: true, scrollSpeed: 14, mascotVisible: true, mascotAnimated: true,
+    events: {
+      late: { anchor: 'start', offset: 20 }, handin: { anchor: 'start', offset: 40 },
+      half: { anchor: 'end', offset: -30 }, final: { anchor: 'end', offset: -5 }
+    },
+    reminders: [
+      { id: 'late-reminder', at: 'late', minutes: 2, enabled: true, text: '遲到同學請先向助教登記。' },
+      { id: 'half-reminder', at: 'half', minutes: 2, enabled: true, text: '考試剩下 {halfMinutes} 分鐘，請留意作答時間。' }
+    ],
+    fixed: [
+      { id: 'question', from: 'start', until: 'end', text: '有問題請舉手，等待助教協助。' },
+      { id: 'bathroom', from: 'start', until: 'end', text: '如需上廁所，請先舉手；每個考場同一時間僅限一人前往。' },
+      { id: 'phone', from: 'admission', until: 'end', text: '手機請關機，並收妥電子設備。' },
+      { id: 'calculator', from: 'admission', until: 'end', text: '不得使用計算機及電子辭典。' }
+    ],
+    phases: [
+      { id: 'entry', anchor: 'admission', offset: 0, title: '入場準備', tone: 'peach', rules: [
+        clone(entryNotice),
+        { text: '請依座位表入座。' }, { text: '請將背包放到前面。' }, { text: '請將學生證放在桌面右上角。' }
+      ] },
+      { id: 'exam', anchor: 'start', offset: 0, title: '尚不可交卷', tone: 'rose', rules: [
+        { text: '考試已開始，請安靜作答。' }, { text: '{handin} 後才可以交卷。' },
+        { text: '請勿與其他同學交談。' }, { text: '考試加油！' }
+      ] },
+      { id: 'submit', anchor: 'handin', offset: 0, title: '可以交卷', tone: 'sage', rules: [
+        { text: '現在可以交卷。' }, { text: '交卷前請確認姓名、學號及班級。' }, { text: '交卷離場時請保持安靜。' }
+      ] },
+      { id: 'last', anchor: 'final', offset: 0, title: '最後 {finalMinutes} 分鐘', tone: 'peach', rules: [
+        { text: '考試剩下最後 {finalMinutes} 分鐘。' },
+        { text: '暫停提前交卷，請等候考試結束後統一收卷。' },
+        { text: '請再次確認姓名、學號及班級。' }
+      ] },
+      { id: 'finished', anchor: 'end', offset: 0, title: '考試結束', tone: 'lavender', rules: [
+        { text: '考試時間已結束，請立即停止作答。' }, { text: '請依助教指示交卷。' },
+        { text: '請留在座位，待助教清點並確認試卷份數後再離場。' }, { text: '大家辛苦了！你們很棒！' }
+      ] }
+    ]
+  };
+  const anchors = ['admission', 'start', 'late', 'handin', 'half', 'final', 'end'];
+  const names = { admission: '開放入場', start: '考試開始', late: '遲到提示', handin: '開放交卷', half: '剩餘時間提醒', final: '最後階段', end: '考試結束' };
+  const getAnchors = c => ['admission', 'start', ...Object.keys(c.events), 'end'];
+  const eventName = (c, id) => c.events[id]?.label ?? names[id] ?? id;
+  function removeEvent(c, id) {
+    if (!Object.hasOwn(c.events, id)) return clone(c);
+    const next = clone(c), deletedTokens = new Set([id]);
+    if (id === 'final') deletedTokens.add('finalMinutes');
+    if (id === 'half') deletedTokens.add('halfMinutes');
+    const references = text => [...String(text).matchAll(/\{([^{}]+)\}/g)].some(m => deletedTokens.has(m[1]));
+    delete next.events[id];
+    next.phases = next.phases.filter(p => p.anchor !== id && (!references(p.title) || (p.anchor === 'end' && p.offset === 0))).map(p => ({
+      ...p, title: references(p.title) ? '考試結束' : p.title,
+      rules: p.rules.filter(r => r.until !== id && !references(r.text))
+    }));
+    next.fixed = next.fixed.filter(r => r.from !== id && r.until !== id && !references(r.text));
+    next.reminders = next.reminders.filter(r => r.at !== id && !references(r.text));
+    return next;
+  }
+  // Upgrade once: a deliberately edited/deleted new rule stays edited/deleted on reload.
+  function upgrade(value) {
+    const c = clone(value);
+    if (!c || typeof c !== 'object' || c.version !== 1 || c.contentRevision !== undefined) return c;
+    c.contentRevision = 2;
+    if (c.mascotVisible === undefined) c.mascotVisible = true;
+    if (c.mascotAnimated === undefined) c.mascotAnimated = true;
+    if (c.title === '微積分一') c.title = '微積分1';
+    if (Array.isArray(c.phases)) {
+      const entry = c.phases.find(p => p.id === 'entry') || c.phases.find(p => p.anchor === 'admission' && p.offset === 0);
+      if (entry && Array.isArray(entry.rules) && !entry.rules.some(r => r.id === entryNotice.id || r.text === entryNotice.text)) entry.rules.unshift(clone(entryNotice));
+    }
+    return c;
+  }
+  function parseTime(value) {
+    if (!/^\d{2}:\d{2}$/.test(value)) return NaN;
+    const [h, m] = value.split(':').map(Number);
+    return h < 24 && m < 60 ? h * 60 + m : NaN;
+  }
+  function dayEpoch(date) { return Date.parse(date + 'T00:00:00+08:00'); }
+  function schedule(c) {
+    const day = dayEpoch(c.date);
+    const t = { admission: day + parseTime(c.admission) * MIN, start: day + parseTime(c.start) * MIN };
+    t.end = t.start + (Number(c.duration) + Number(c.extension)) * MIN;
+    for (const [id, event] of Object.entries(c.events)) t[id] = t[event.anchor] + Number(event.offset) * MIN;
+    return t;
+  }
+  function parts(epoch) {
+    const d = new Date(epoch + 8 * 60 * MIN);
+    return { date: d.toISOString().slice(0, 10), h: d.getUTCHours(), m: d.getUTCMinutes(), s: d.getUTCSeconds(), weekday: '日一二三四五六'[d.getUTCDay()] };
+  }
+  const pad = n => String(n).padStart(2, '0');
+  function hhmm(epoch) { const p = parts(epoch); return pad(p.h) + ':' + pad(p.m); }
+  function timeLabel(epoch, date) {
+    const p = parts(epoch);
+    return (p.date === date ? '' : p.date.slice(5).replace('-', '/') + ' ') + hhmm(epoch);
+  }
+  function tokens(c, t = schedule(c)) {
+    const result = { date: c.date.replaceAll('-', '/') };
+    if (Object.hasOwn(c.events, 'final')) result.finalMinutes = String((t.end - t.final) / MIN);
+    if (Object.hasOwn(c.events, 'half')) result.halfMinutes = String((t.end - t.half) / MIN);
+    for (const id of getAnchors(c)) result[id] = timeLabel(t[id], c.date);
+    return result;
+  }
+  function interpolate(text, c, t) {
+    const values = tokens(c, t);
+    return text.replace(/\{([^{}]+)\}/g, (match, key) => values[key] ?? match);
+  }
+  function phases(c, t = schedule(c)) {
+    return c.phases.map(p => ({ ...p, at: t[p.anchor] + Number(p.offset) * MIN })).sort((a, b) => a.at - b.at);
+  }
+  function stateAt(c, now) {
+    const t = schedule(c);
+    const stages = phases(c, t);
+    const stage = stages.filter(p => p.at <= now).at(-1) || { id: 'waiting', title: '等候入場', tone: 'lavender', rules: [{ text: '{admission} 開放入場，請稍候。' }] };
+    const fixed = c.fixed.filter(r => now >= t[r.from] && now < t[r.until]).map(r => interpolate(r.text, c, t));
+    // Phase membership controls display. Preserve legacy options in saved data,
+    // but no hidden enable/hold/stop controls affect ordinary phase rules now.
+    // The pre-exam notice retains its required hard stop at the adjusted start.
+    const ruleItems = stage.rules.filter(r => r.id !== entryNotice.id || now < t.start).map(r => ({ ...r, text: interpolate(r.text, c, t) }));
+    const rules = ruleItems.map(r => r.text);
+    const reminders = c.reminders.filter(r => {
+      const start = t[r.at], stop = start + r.minutes * MIN;
+      return r.enabled && now >= start && now < (start < t.end ? Math.min(t.end, stop) : stop);
+    }).map(r => interpolate(r.text, c, t));
+    const target = now < t.start ? t.start : now < t.handin ? t.handin : t.end;
+    const countdownLabel = now < t.start ? '距離考試開始' : now < t.handin ? '距離' + eventName(c, 'handin') : now < t.end ? '距離考試結束' : '考試已結束';
+    return { t, stage, title: interpolate(stage.title, c, t), fixed, rules, ruleItems, reminders, countdownLabel,
+      remaining: Math.max(0, Math.ceil((target - now) / 1000)), progress: Math.max(0, Math.min(1, (now - t.start) / (t.end - t.start))) };
+  }
+  function durationText(seconds) {
+    const h = Math.floor(seconds / 3600), m = Math.floor(seconds % 3600 / 60), s = seconds % 60;
+    return h ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+  }
+  function validate(c) {
+    const errors = [];
+    const need = (ok, message) => { if (!ok) errors.push(message); };
+    try {
+      need(c.version === 1, '設定版本不相容。');
+      need(c.contentRevision === 2, '設定內容版本不相容。');
+      need(typeof c.mascotVisible === 'boolean' && typeof c.mascotAnimated === 'boolean', '吉祥物開關設定格式錯誤。');
+      for (const field of ['title', 'subtitle', 'className', 'room']) need(typeof c[field] === 'string' && c[field].length <= 100, '考試資訊須為 100 字以內的文字。');
+      need(c.title.trim().length > 0, '請填寫考試名稱。');
+      need(/^\d{4}-\d{2}-\d{2}$/.test(c.date) && parts(dayEpoch(c.date)).date === c.date, '請填寫有效考試日期。');
+      need(Number.isFinite(parseTime(c.start)) && Number.isFinite(parseTime(c.admission)), '請填寫有效入場及開始時間。');
+      need(Number.isInteger(c.duration) && c.duration > 0 && c.duration <= 1440, '原訂考試長度須為 1–1440 分鐘。');
+      need(Number.isInteger(c.extension) && c.extension >= 0 && c.extension <= 1440, '額外延長須為 0–1440 分鐘。');
+      need(typeof c.autoScroll === 'boolean', '開關設定格式錯誤。');
+      need(Number.isFinite(c.scrollSpeed) && c.scrollSpeed >= 5 && c.scrollSpeed <= 40, '捲動速度須為每秒 5–40 像素。');
+      need(c.events && typeof c.events === 'object' && !Array.isArray(c.events) && Object.keys(c.events).length <= 40, '最多可設定 40 個時間節點。');
+      const activeAnchors = getAnchors(c);
+      for (const [id, event] of Object.entries(c.events)) {
+        need(/^[a-z][a-z0-9_-]{0,59}$/.test(id) && !['admission', 'start', 'end', 'date', 'finalMinutes', 'halfMinutes', '__proto__', 'constructor', 'prototype'].includes(id), '時間節點識別碼無效或與基準時間重複。');
+        need(['admission', 'start', 'end'].includes(event.anchor) && Number.isInteger(event.offset), '時間節點須以入場、開始或結束為基準，並使用整數分鐘。');
+        need(event.label === undefined || (typeof event.label === 'string' && event.label.trim().length > 0 && event.label.length <= 60), '時間節點名稱須為 1–60 字。');
+      }
+      const t = schedule(c);
+      need(t.admission <= t.start, '入場時間不能晚於開始時間。');
+      const hasHandin = Object.hasOwn(c.events, 'handin'), hasFinal = Object.hasOwn(c.events, 'final');
+      need((!hasHandin || t.start < t.handin && t.handin < t.end) && (!hasFinal || t.start < t.final && t.final < t.end) && (!hasHandin || !hasFinal || t.handin < t.final), '時間順序須為：開始 < 開放交卷 < 最後階段 < 結束（已刪除的節點略過）。');
+      for (const id of Object.keys(c.events)) need(t[id] >= t.admission && t[id] <= t.end, '時間節點須介於入場與考試結束之間。');
+      const textOK = text => {
+        need(typeof text === 'string' && text.trim().length > 0 && text.length <= 2000, '規則與階段名稱不可空白，且須在 2000 字內。');
+        if (typeof text === 'string') for (const match of text.matchAll(/\{([^{}]+)\}/g)) need(Object.hasOwn(tokens(c, t), match[1]), '未知時間代碼：{' + match[1] + '}');
+      };
+      need(Array.isArray(c.phases) && c.phases.length > 0 && c.phases.length <= 40, '請保留 1–40 個階段。');
+      const ids = new Set(), times = new Set();
+      for (const p of c.phases) {
+        need(typeof p.id === 'string' && !ids.has(p.id), '階段識別碼不能重複。'); ids.add(p.id);
+        need(activeAnchors.includes(p.anchor) && Number.isInteger(p.offset), '階段時間基準或分鐘格式錯誤。');
+        const at = t[p.anchor] + p.offset * MIN;
+        need(at >= t.admission && at <= t.end, '階段開始須介於入場與結束時間。');
+        need(!times.has(at), '兩個階段不能在同一時間開始。'); times.add(at);
+        textOK(p.title);
+        need(['peach', 'rose', 'sage', 'lavender'].includes(p.tone), '階段顏色格式錯誤。');
+        need(Array.isArray(p.rules) && p.rules.length <= 100, '每階段最多 100 條規則。');
+        for (const r of p.rules) {
+          textOK(r.text); need(!r.condition || r.condition === 'holdFinal', '規則顯示條件格式錯誤。');
+          need(r.highlight === undefined || typeof r.highlight === 'boolean', '醒目提醒設定格式錯誤。');
+          need(r.enabled === undefined || typeof r.enabled === 'boolean', '規則啟用設定格式錯誤。');
+          need(r.until === undefined || activeAnchors.includes(r.until), '規則停止顯示時間格式錯誤。');
+        }
+      }
+      // End is a safety boundary even when preceding stages are customized.
+      need(c.phases.some(p => p.anchor === 'end' && p.offset === 0), '請保留一個於考試結束時開始的階段。');
+      need(Array.isArray(c.fixed) && c.fixed.length <= 40, '固定規則最多 40 條。');
+      for (const r of c.fixed) { textOK(r.text); need(activeAnchors.includes(r.from) && activeAnchors.includes(r.until) && t[r.from] < t[r.until], '固定規則的結束時間須晚於開始時間。'); }
+      need(Array.isArray(c.reminders) && c.reminders.length <= 40, '提醒最多 40 條。');
+      for (const r of c.reminders) { textOK(r.text); need(activeAnchors.includes(r.at) && typeof r.enabled === 'boolean' && Number.isInteger(r.minutes) && r.minutes >= 1 && r.minutes <= 60, '提醒須使用有效時間節點，顯示長度為 1–60 整數分鐘。'); }
+    } catch { errors.push('設定內容不完整或格式錯誤。'); }
+    return [...new Set(errors)];
+  }
+  return { MIN, defaults, clone, upgrade, anchors, names, getAnchors, eventName, removeEvent, parseTime, dayEpoch, schedule, parts, hhmm, timeLabel, tokens, interpolate, phases, stateAt, durationText, validate };
+});
+</script>
+  <script>/* Visual state and cancellable, single-turn animation scheduling; no exam mutations. */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.ExamMascot = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  function poseAt(times, now) {
+    if (now >= times.end) return 'finished';
+    if (now < times.start) return 'waiting';
+    if (now >= times.final) return 'focused';
+    return 'reading';
+  }
+  function createPageTurner({ onTurn, onRest, random = Math.random,
+    setTimer = setTimeout, clearTimer = clearTimeout, turnDuration = 1100 }) {
+    let enabled = false, turning = false, timer = null;
+    function clear() { if (timer !== null) clearTimer(timer); timer = null; }
+    function schedule() {
+      if (!enabled) return;
+      // Draw a fresh 4–10 second rest AFTER each finished page turn.
+      const delay = 4000 + Math.floor(Math.max(0, Math.min(1, random())) * 6000);
+      timer = setTimer(() => {
+        timer = null;
+        if (!enabled) return;
+        turning = true;
+        onTurn();
+        // Also settle if the browser omits animationend (e.g. rendering suspension).
+        timer = setTimer(complete, turnDuration + 150);
+      }, delay);
+    }
+    function complete() {
+      if (!turning) return;
+      clear(); turning = false; onRest(); schedule();
+    }
+    function setEnabled(value) {
+      const next = !!value;
+      if (next === enabled) return;
+      enabled = next; clear(); turning = false; onRest();
+      if (enabled) schedule();
+    }
+    function dispose() { enabled = false; clear(); turning = false; onRest(); }
+    return { setEnabled, complete, dispose };
+  }
+  return { poseAt, createPageTurner };
+});
+</script>
+  <script>(() => {
+  'use strict';
+  const C = window.ExamCore, $ = id => document.getElementById(id);
+  const KEY = 'calculus-exam-timer.v1';
+  let config = C.clone(C.defaults), draft, configRevision = 0, simulation = null, toastTimer;
+  let storageMessage = '設定儲存在此裝置';
+  try {
+    const saved = localStorage.getItem(KEY);
+    if (saved) {
+      const parsed = C.upgrade(JSON.parse(saved));
+      if (C.validate(parsed).length) storageMessage = '舊設定無效，已載入預設';
+      else {
+        config = parsed;
+        // Persist the migration marker so deleted notices do not return next visit.
+        if (JSON.stringify(parsed) !== saved) {
+          try { localStorage.setItem(KEY, JSON.stringify(parsed)); }
+          catch { storageMessage = '設定已升級但無法儲存；請匯出備份'; }
+        }
+      }
+    }
+  } catch { storageMessage = '無法讀取儲存設定；請匯出備份'; }
+  const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+  const reducedMotion = motionPreference.matches;
+  const pageTurner = window.ExamMascot.createPageTurner({
+    onTurn: () => $('mascot-slot').classList.add('is-turning'),
+    onRest: () => $('mascot-slot').classList.remove('is-turning')
+  });
+  const pageSheet = document.querySelector('.mascot-page');
+  pageSheet.addEventListener('animationend', event => {
+    if (event.animationName === 'mascot-page-turn') pageTurner.complete();
+  });
+  function syncMascot(times, instant) {
+    const pose = window.ExamMascot.poseAt(times, instant);
+    $('mascot-slot').dataset.state = pose;
+    pageTurner.setEnabled(pose === 'reading' && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
+  }
+  motionPreference.addEventListener('change', () => syncMascot(C.schedule(config), now()));
+  window.addEventListener('pagehide', () => pageTurner.dispose());
+  let scrollPaused = reducedMotion, hovering = false, focusing = false, lastFrame = 0, scrollPosition = 0, pauseUntil = 0;
+  let signature = '', overflow = false;
+  const uid = () => 'item-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  const node = (tag, className, text) => { const el = document.createElement(tag); if (className) el.className = className; if (text !== undefined) el.textContent = text; return el; };
+  const button = (text, fn, className) => { const b = node('button', className, text); b.type = 'button'; b.addEventListener('click', fn); return b; };
+  function toast(text) { $('toast').textContent = text; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').hidden = true, 4500); }
+  function persist() {
+    try { localStorage.setItem(KEY, JSON.stringify(config)); storageMessage = '設定已儲存在此裝置'; }
+    catch { storageMessage = '設定已套用，但無法儲存；請匯出備份'; }
+    $('save-status').textContent = storageMessage;
+  }
+  function now() { return simulation ? simulation.epoch + (performance.now() - simulation.base) * simulation.speed : Date.now(); }
+  function metadata() {
+    $('mascot-slot').hidden = !config.mascotVisible;
+    $('mascot-slot').classList.toggle('is-still', !config.mascotAnimated);
+    $('exam-title').textContent = config.title; $('exam-subtitle').textContent = config.subtitle;
+    document.title = config.title + ' · ' + config.subtitle + '計時器';
+    $('exam-date').textContent = config.date.replaceAll('-', ' / ') + '（' + C.parts(C.dayEpoch(config.date)).weekday + '）';
+    $('exam-class').textContent = '班別：' + (config.className || '未設定'); $('exam-room').textContent = '考場：' + (config.room || '未設定');
+    $('save-status').textContent = storageMessage;
+    const t = C.schedule(config), total = t.end - t.start;
+    $('exam-range').textContent = C.timeLabel(t.start, config.date) + ' — ' + C.timeLabel(t.end, config.date);
+    ['start', 'handin', 'end'].forEach(id => $('time-' + id).textContent = Number.isFinite(t[id]) ? C.timeLabel(t[id], config.date) : '');
+    $('handin-node').hidden = !Number.isFinite(t.handin);
+    $('handin-node').querySelector('span').firstChild.textContent = config.events.handin?.label || '可交卷';
+    if (Number.isFinite(t.handin)) $('handin-node').style.left = ((t.handin - t.start) / total * 100) + '%';
+    $('timeline').classList.toggle('crowded', Number.isFinite(t.handin) && ((t.handin - t.start) / total < .18 || (t.handin - t.start) / total > .82));
+    $('admission-note').textContent = C.timeLabel(t.admission, config.date) + ' 開放入場';
+    $('final-note').parentElement.hidden = !Number.isFinite(t.final);
+    if (Number.isFinite(t.final)) $('final-note').textContent = C.timeLabel(t.final, config.date) + ' ' + (config.events.final.label || '最後 ' + C.tokens(config).finalMinutes + ' 分鐘');
+    const seg = $('timeline-segments'); seg.replaceChildren();
+    const bounds = [t.start, t.handin, t.final, t.end].filter(Number.isFinite);
+    bounds.slice(0, -1).forEach((at, i) => {
+      const color = Number.isFinite(t.final) && at >= t.final ? 'peach' : Number.isFinite(t.handin) && at < t.handin ? 'rose' : 'sage';
+      const s = node('span', color); s.style.width = (bounds[i + 1] - at) / total * 100 + '%'; seg.append(s);
+    });
+    $('phase-ticks').replaceChildren();
+    for (const p of C.phases(config)) if (p.at > t.start && p.at < t.end && p.at !== t.handin) {
+      const tick = node('i', 'phase-tick'); tick.style.left = (p.at - t.start) / total * 100 + '%'; tick.title = C.interpolate(p.title, config) + ' · ' + C.timeLabel(p.at, config.date); $('phase-ticks').append(tick);
+    }
+    const extra = $('extra-timepoints'); extra.replaceChildren();
+    for (const id of Object.keys(config.events)) {
+      if (t[id] > t.start && t[id] < t.end && !['handin', 'final'].includes(id)) {
+        const tick = node('i', 'phase-tick event-tick'); tick.style.left = (t[id] - t.start) / total * 100 + '%'; tick.title = C.eventName(config, id) + ' · ' + C.timeLabel(t[id], config.date); $('phase-ticks').append(tick);
+      }
+      if (!['late', 'handin', 'half', 'final'].includes(id)) extra.append(node('span', '', C.timeLabel(t[id], config.date) + ' ' + C.eventName(config, id)));
+    }
+    extra.hidden = !extra.childElementCount;
+    signature = ''; render();
+  }
+  function list(items, el, numbered = false) {
+    let ruleNumber = 0;
+    el.replaceChildren(...items.map((item, i) => {
+      const text = typeof item === 'string' ? item : item.text, highlight = typeof item === 'object' && item.highlight;
+      const li = node('li', highlight ? 'rule-notice' : '');
+      if (highlight) li.append(node('span', 'notice-label', '請留意'));
+      else if (numbered) li.append(node('span', 'rule-number', String(++ruleNumber).padStart(2, '0')));
+      li.append(document.createTextNode(text)); return li;
+    }));
+  }
+  function render() {
+    const instant = now(), s = C.stateAt(config, instant), p = C.parts(instant);
+    syncMascot(s.t, instant);
+    $('clock-hm').textContent = C.hhmm(instant); $('clock-sec').textContent = String(p.s).padStart(2, '0');
+    $('actual-date').hidden = p.date === config.date;
+    $('actual-date').textContent = '現在日期 ' + p.date.replaceAll('-', ' / ');
+    $('countdown-label').textContent = s.countdownLabel; $('countdown').textContent = instant >= s.t.end ? '00:00' : C.durationText(s.remaining);
+    $('now-marker').style.left = s.progress * 100 + '%'; $('timeline-elapsed').style.width = s.progress * 100 + '%';
+    $('timeline').setAttribute('aria-valuenow', Math.round(s.progress * 100));
+    $('progress-caption').textContent = instant < s.t.start ? '尚未開始' : instant >= s.t.end ? '已完成' : Math.floor(s.progress * 100) + '%';
+    const nextSig = JSON.stringify([configRevision, s.stage.id, s.fixed, s.rules, s.reminders]);
+    if (signature !== nextSig) {
+      signature = nextSig;
+      $('status').className = 'status-pill ' + s.stage.tone; $('status-text').textContent = s.title;
+      $('phase-chip').textContent = s.title;
+      $('fixed-section').hidden = !s.fixed.length; list(s.fixed, $('fixed-rules')); list(s.ruleItems, $('stage-rules'), true);
+      $('reminder-banner').hidden = !s.reminders.length; $('reminder-banner').textContent = s.reminders.join('　');
+      scrollPosition = 0; $('scroll-viewport').scrollTop = 0; pauseUntil = performance.now() + 3000;
+      requestAnimationFrame(measureScroll);
+    }
+    if (simulation) $('simulation-summary').textContent = p.date.replaceAll('-', '/') + ' · ' + (simulation.speed ? simulation.speed + ' 倍速' : '已暫停');
+  }
+  function measureScroll() {
+    const content = $('scroll-content'), viewport = $('scroll-viewport');
+    content.querySelectorAll('[data-copy]').forEach(el => el.remove());
+    overflow = $('stage-rules').scrollHeight > viewport.clientHeight + 2;
+    if (overflow && config.autoScroll) {
+      const duplicate = $('stage-rules').cloneNode(true); duplicate.removeAttribute('id'); duplicate.dataset.copy = 'true'; duplicate.setAttribute('aria-hidden', 'true'); duplicate.style.paddingTop = '26px'; content.append(duplicate);
+    }
+    scrollPosition = 0; viewport.scrollTop = 0; pauseUntil = performance.now() + 3000;
+    scrollUI();
+  }
+  function scrollUI() {
+    $('scroll-toggle').hidden = !overflow || !config.autoScroll;
+    $('scroll-toggle').textContent = scrollPaused ? '繼續捲動' : '暫停捲動';
+    $('scroll-hint').textContent = !overflow ? '安心作答，慢慢來。' : !config.autoScroll ? '上下捲動，閱讀全部提醒' : scrollPaused ? '已暫停 · 可手動捲動' : '↑ 緩慢循環上捲 · 移入暫停';
+  }
+  function animateScroll(timestamp) {
+    const elapsed = Math.min((timestamp - lastFrame) / 1000, .1); lastFrame = timestamp;
+    if (overflow && config.autoScroll && !scrollPaused && !hovering && !focusing && timestamp > pauseUntil && !$('settings-dialog').open) {
+      const viewport = $('scroll-viewport'), cycle = $('stage-rules').offsetHeight + 26;
+      scrollPosition += elapsed * config.scrollSpeed;
+      if (scrollPosition >= cycle) { scrollPosition %= cycle; pauseUntil = timestamp + 2500; }
+      viewport.scrollTop = scrollPosition;
+    }
+    requestAnimationFrame(animateScroll);
+  }
+  $('scroll-toggle').onclick = () => { scrollPaused = !scrollPaused; scrollPosition = $('scroll-viewport').scrollTop; scrollUI(); };
+  $('scroll-viewport').addEventListener('mouseenter', () => hovering = true);
+  $('scroll-viewport').addEventListener('mouseleave', () => { hovering = false; scrollPosition = $('scroll-viewport').scrollTop; pauseUntil = performance.now() + 1500; });
+  $('scroll-viewport').addEventListener('focusin', () => focusing = true);
+  $('scroll-viewport').addEventListener('focusout', () => { focusing = false; scrollPosition = $('scroll-viewport').scrollTop; });
+  $('scroll-viewport').addEventListener('wheel', () => { pauseUntil = performance.now() + 4000; setTimeout(() => scrollPosition = $('scroll-viewport').scrollTop, 200); }, { passive: true });
+  $('scroll-viewport').addEventListener('touchstart', () => hovering = true, { passive: true });
+  $('scroll-viewport').addEventListener('touchend', () => { hovering = false; pauseUntil = performance.now() + 5000; setTimeout(() => scrollPosition = $('scroll-viewport').scrollTop, 500); }, { passive: true });
+  new ResizeObserver(measureScroll).observe($('scroll-viewport'));
+  async function fullscreen() {
+    try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); }
+    catch { toast('此瀏覽器不支援網頁全螢幕，請使用瀏覽器的全螢幕功能。'); }
+  }
+  $('fullscreen').onclick = fullscreen;
+  document.addEventListener('fullscreenchange', () => { $('fullscreen').setAttribute('aria-label', document.fullscreenElement ? '離開全螢幕' : '進入全螢幕'); });
+  document.addEventListener('keydown', e => { if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey && !e.metaKey && !$('settings-dialog').open && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) { e.preventDefault(); fullscreen(); } });
+  function chooseTab(name) {
+    if (name === 'rules') { renderFixed(); renderPhases(); renderReminders(); }
+    document.querySelectorAll('[data-tab]').forEach(el => { const active = el.dataset.tab === name; el.classList.toggle('active', active); el.setAttribute('aria-pressed', active); });
+    document.querySelectorAll('[data-panel]').forEach(el => el.hidden = el.dataset.panel !== name);
+    $('settings-errors').hidden = true;
+  }
+  document.querySelectorAll('[data-tab]').forEach(el => el.onclick = () => chooseTab(el.dataset.tab));
+  const fields = ['title', 'subtitle', 'className', 'room', 'date', 'admission', 'start', 'duration', 'extension', 'autoScroll', 'scrollSpeed', 'mascotVisible', 'mascotAnimated'];
+  function fillFields() {
+    for (const name of fields) { const input = $('settings-form').elements.namedItem(name); if (input.type === 'checkbox') input.checked = draft[name]; else input.value = draft[name]; }
+  }
+  for (const name of fields) {
+    const input = $('settings-form').elements.namedItem(name);
+    input.addEventListener('input', () => { draft[name] = input.type === 'checkbox' ? input.checked : input.type === 'number' ? Number(input.value) : input.value; updatePreview(); dirtyNote(); });
+  }
+  function dirtyNote() { $('draft-note').textContent = JSON.stringify(draft) === JSON.stringify(config) ? '修改後按「套用設定」才生效。' : '有尚未套用的修改'; }
+  function showErrors(errors) { $('settings-errors').textContent = errors.join('\n'); $('settings-errors').hidden = !errors.length; if (errors.length) $('settings-errors').scrollIntoView({ block: 'nearest' }); }
+  function openSettings() {
+    draft = C.clone(config); fillFields(); renderEditors(); updatePreview(); dirtyNote(); chooseTab('general');
+    const p = C.parts(now()); $('sim-datetime').value = p.date + 'T' + C.hhmm(now()) + ':' + String(p.s).padStart(2, '0');
+    renderJumps(); $('settings-dialog').showModal();
+  }
+  $('settings-open').onclick = openSettings;
+  $('settings-close').onclick = $('settings-cancel').onclick = () => $('settings-dialog').close();
+  $('settings-form').onsubmit = event => {
+    event.preventDefault(); const errors = C.validate(draft); if (errors.length) { showErrors(errors); return; }
+    config = C.clone(draft); configRevision++; persist(); metadata(); $('settings-dialog').close(); toast(storageMessage);
+  };
+  function labeled(label, control) { const l = node('label', '', label); l.append(control); return l; }
+  function input(value, fn, type = 'text') { const el = node('input'); el.type = type; el.value = value; el.addEventListener('input', () => { fn(type === 'number' ? Number(el.value) : el.value); dirtyNote(); updatePreview(); }); return el; }
+  function textarea(value, fn, label) { const el = node('textarea'); el.value = value; el.rows = 2; el.setAttribute('aria-label', label); el.addEventListener('input', () => { fn(el.value); dirtyNote(); }); return el; }
+  function select(value, values, fn, label) {
+    const el = node('select'); if (label) el.setAttribute('aria-label', label);
+    for (const [v, text] of values) { const opt = node('option', '', text); opt.value = v; el.append(opt); } el.value = value;
+    el.onchange = () => { fn(el.value); dirtyNote(); updatePreview(); }; return el;
+  }
+  const anchorOptions = () => C.getAnchors(draft).map(k => [k, C.eventName(draft, k)]);
+  const colorOptions = [['sage', '鼠尾草綠'], ['rose', '櫻花粉'], ['peach', '奶油杏'], ['lavender', '淡紫色']];
+  function deleteButton(array, index, rerender) { return button('刪除', () => { array.splice(index, 1); rerender(); dirtyNote(); updatePreview(); }, 'danger'); }
+  function renderEvents() {
+    $('event-editors').replaceChildren();
+    for (const id of Object.keys(draft.events)) {
+      const row = node('div', 'event-row');
+      row.append(labeled('節點名稱', input(C.eventName(draft, id), v => draft.events[id].label = v)));
+      row.append(labeled('時間基準', select(draft.events[id].anchor, [['admission', '開放入場'], ['start', '考試開始'], ['end', '考試結束']], v => draft.events[id].anchor = v)));
+      row.append(labeled('相差分鐘', input(draft.events[id].offset, v => draft.events[id].offset = v, 'number')));
+      const actions = node('div', 'event-actions'); actions.append(node('code', '', '{' + id + '}'), button('刪除節點', () => {
+        const label = C.eventName(draft, id), before = draft, next = C.removeEvent(draft, id);
+        const countRules = c => c.fixed.length + c.phases.reduce((n, p) => n + p.rules.length, 0);
+        const removed = `${before.phases.length - next.phases.length} 個階段、${countRules(before) - countRules(next)} 條規則、${before.reminders.length - next.reminders.length} 個提醒`;
+        draft = next; renderEditors(); updatePreview(); dirtyNote(); toast('草稿已刪除「' + label + '」及 ' + removed + '；套用後生效。');
+      }, 'danger'));
+      row.append(actions); $('event-editors').append(row);
+    }
+  }
+  function renderFixed() {
+    $('fixed-editors').replaceChildren();
+    draft.fixed.forEach((rule, i) => {
+      const card = node('div', 'editor-card'); card.append(textarea(rule.text, v => rule.text = v, '固定規則 ' + (i + 1)));
+      const grid = node('div', 'field-grid'); grid.append(labeled('開始顯示', select(rule.from, anchorOptions(), v => rule.from = v)), labeled('停止顯示', select(rule.until, anchorOptions(), v => rule.until = v))); card.append(grid);
+      const row = node('div', 'delete-row'); row.append(node('span', '', '固定規則 ' + (i + 1)), deleteButton(draft.fixed, i, renderFixed)); card.append(row); $('fixed-editors').append(card);
+    });
+  }
+  function renderPhaseRules(p, container) {
+    container.replaceChildren();
+    p.rules.forEach((r, i) => {
+      const row = node('div', 'rule-editor'); row.append(textarea(r.text, v => r.text = v, '階段規則 ' + (i + 1)));
+      const controls = node('div', 'rule-controls');
+      const up = button('上移', () => { [p.rules[i - 1], p.rules[i]] = [p.rules[i], p.rules[i - 1]]; renderPhaseRules(p, container); dirtyNote(); }); up.disabled = i === 0;
+      const down = button('下移', () => { [p.rules[i + 1], p.rules[i]] = [p.rules[i], p.rules[i + 1]]; renderPhaseRules(p, container); dirtyNote(); }); down.disabled = i === p.rules.length - 1;
+      controls.append(up, down, deleteButton(p.rules, i, () => renderPhaseRules(p, container))); row.append(controls);
+      container.append(row);
+    });
+    container.append(button('＋ 新增這個階段的規則', () => { p.rules.push({ text: '請輸入規則內容。' }); renderPhaseRules(p, container); dirtyNote(); }));
+  }
+  function renderPhases(openId) {
+    $('phase-editors').replaceChildren();
+    draft.phases.forEach((p, i) => {
+      const card = node('details', 'editor-card'); card.open = p.id === openId;
+      const summary = node('summary', '', p.title); card.append(summary);
+      const grid = node('div', 'field-grid');
+      grid.append(labeled('階段名稱', input(p.title, v => { p.title = v; summary.textContent = v; })), labeled('顏色', select(p.tone, colorOptions, v => p.tone = v)), labeled('開始基準', select(p.anchor, anchorOptions(), v => p.anchor = v)), labeled('相差分鐘', input(p.offset, v => p.offset = v, 'number')));
+      card.append(grid); const rules = node('div', 'phase-rules'); renderPhaseRules(p, rules); card.append(rules);
+      const row = node('div', 'delete-row'); row.append(node('span', '', '開始後持續至下一階段'), deleteButton(draft.phases, i, renderPhases)); card.append(row); $('phase-editors').append(card);
+    });
+  }
+  function renderReminders() {
+    $('reminder-editors').replaceChildren();
+    draft.reminders.forEach((r, i) => {
+      const card = node('div', 'editor-card'); card.append(textarea(r.text, v => r.text = v, '定時提醒 ' + (i + 1)));
+      const grid = node('div', 'field-grid'); grid.append(labeled('顯示時間', select(r.at, anchorOptions(), v => r.at = v)), labeled('顯示長度（分鐘）', input(r.minutes, v => r.minutes = v, 'number'))); card.append(grid);
+      const row = node('div', 'delete-row'), check = node('input'); check.type = 'checkbox'; check.checked = r.enabled; check.onchange = () => { r.enabled = check.checked; dirtyNote(); };
+      const label = node('label', 'check'); label.append(check, document.createTextNode('啟用提醒')); row.append(label, deleteButton(draft.reminders, i, renderReminders)); card.append(row); $('reminder-editors').append(card);
+    });
+  }
+  function renderEditors() { renderEvents(); renderFixed(); renderPhases(); renderReminders(); }
+  $('add-event').onclick = () => {
+    if (Object.keys(draft.events).length >= 40) { showErrors(['最多可設定 40 個時間節點。']); return; }
+    draft.events[uid()] = { label: '自訂節點', anchor: 'start', offset: 60 };
+    renderEvents(); updatePreview(); dirtyNote();
+  };
+  $('add-fixed').onclick = () => { draft.fixed.push({ id: uid(), from: 'start', until: 'end', text: '請輸入規則內容。' }); renderFixed(); dirtyNote(); };
+  $('add-phase').onclick = () => {
+    const t = C.schedule(draft), occupied = new Set(C.phases(draft).map(p => p.at));
+    let offset = 1; while (occupied.has(t.start + offset * C.MIN)) offset++;
+    const p = { id: uid(), title: '自訂階段', anchor: 'start', offset, tone: 'sage', rules: [{ text: '請輸入這個階段的提醒。' }] };
+    draft.phases.push(p); renderPhases(p.id); dirtyNote();
+  };
+  $('add-reminder').onclick = () => { draft.reminders.push({ id: uid(), at: 'start', minutes: 2, enabled: true, text: '請輸入提醒內容。' }); renderReminders(); dirtyNote(); };
+  function updatePreview() {
+    const target = $('schedule-preview'); target.replaceChildren();
+    try {
+      const t = C.schedule(draft), before = C.schedule(config);
+      if (Object.values(t).some(v => !Number.isFinite(v))) throw new Error();
+      for (const id of C.getAnchors(draft).sort((a, b) => t[a] - t[b])) {
+        const row = node('div', 'preview-item'); row.append(node('span', '', C.eventName(draft, id))); const right = node('div');
+        if (Number.isFinite(before[id]) && before[id] !== t[id]) right.append(node('small', '', C.timeLabel(before[id], config.date) + ' →'));
+        right.append(node('strong', '', C.timeLabel(t[id], draft.date))); row.append(right); target.append(row);
+      }
+      for (const id of Object.keys(config.events).filter(id => !Object.hasOwn(draft.events, id))) target.append(node('p', 'help danger', '已刪除：' + C.eventName(config, id) + '（引用它的階段、規則與提醒也會移除）'));
+      const errors = C.validate(draft); if (errors.length) target.append(node('p', 'help', errors.join(' ')));
+    } catch { target.append(node('p', 'help', '請填入完整日期與時間，以預覽時程。')); }
+  }
+  document.querySelectorAll('[data-shift]').forEach(b => b.onclick = () => {
+    const m = C.parseTime(draft.start) + Number(b.dataset.shift);
+    if (!Number.isFinite(m) || m < 0 || m >= 1440) { showErrors(['開考時間超出當日；請先調整日期及入場時間。']); return; }
+    draft.start = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); fillFields(); updatePreview(); dirtyNote();
+  });
+  $('reset-config').onclick = () => { draft = C.clone(C.defaults); fillFields(); renderEditors(); updatePreview(); dirtyNote(); toast('預設已載入草稿；套用後才生效。'); };
+  $('export-config').onclick = () => {
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob), a = node('a'); a.href = url; a.download = 'exam-settings-' + config.date + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+  $('import-config').onclick = () => $('import-file').click();
+  $('import-file').onchange = async event => {
+    const file = event.target.files[0]; if (!file) return;
+    try {
+      if (file.size > 1024 * 1024) throw new Error('設定檔不能超過 1 MB。');
+      const parsed = C.upgrade(JSON.parse(await file.text())), errors = C.validate(parsed); if (errors.length) throw new Error(errors.join('\n'));
+      draft = parsed; fillFields(); renderEditors(); updatePreview(); dirtyNote(); toast('已匯入草稿，請檢查後套用。');
+    } catch (e) { showErrors(['匯入失敗：' + e.message]); } finally { event.target.value = ''; }
+  };
+  function startSimulation(epoch, speed) {
+    if (!Number.isFinite(epoch)) { showErrors(['請選擇有效模擬日期與時間。']); return; }
+    simulation = { epoch, base: performance.now(), speed, resumeSpeed: speed || 1 };
+    document.body.classList.add('simulating'); $('simulation-banner').hidden = false; $('clock-mode').textContent = '模擬時間'; $('sim-pause').textContent = speed ? '暫停' : '播放';
+    $('settings-dialog').close(); render();
+  }
+  function stopSimulation() { simulation = null; document.body.classList.remove('simulating'); $('simulation-banner').hidden = true; $('clock-mode').textContent = '現在時間'; render(); }
+  function simulationAllowed() { if (JSON.stringify(draft) !== JSON.stringify(config)) { showErrors(['有尚未套用的修改。請先套用設定，再重新開啟模擬測試。']); return false; } return true; }
+  $('sim-start').onclick = () => { if (simulationAllowed()) startSimulation(Date.parse($('sim-datetime').value + '+08:00'), Number($('sim-speed').value)); };
+  $('sim-exit').onclick = stopSimulation;
+  $('sim-real').onclick = () => { stopSimulation(); $('settings-dialog').close(); };
+  $('sim-pause').onclick = () => { if (!simulation) return; const epoch = now(), speed = simulation.speed ? 0 : simulation.resumeSpeed; if (simulation.speed) simulation.resumeSpeed = simulation.speed; simulation.epoch = epoch; simulation.base = performance.now(); simulation.speed = speed; $('sim-pause').textContent = speed ? '暫停' : '播放'; render(); };
+  function renderJumps() {
+    $('sim-jumps').replaceChildren(); const t = C.schedule(config);
+    for (const id of C.getAnchors(config).sort((a, b) => t[a] - t[b])) $('sim-jumps').append(button(C.hhmm(t[id]) + ' ' + C.eventName(config, id), () => { if (simulationAllowed()) startSimulation(t[id], Number($('sim-speed').value)); }));
+  }
+  // Resolve from absolute time on every tick: background throttling cannot accumulate drift.
+  document.addEventListener('visibilitychange', () => { syncMascot(C.schedule(config), now()); if (!document.hidden) render(); });
+  window.addEventListener('pageshow', render);
+  metadata(); setInterval(render, 200); requestAnimationFrame(animateScroll);
+})();
+</script>
+</body>
+</html>
