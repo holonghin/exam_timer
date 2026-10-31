@@ -60,10 +60,11 @@ test('page layer is a single right-to-left turn and reduced-motion leaves neutra
 test('waiting has coordinated dozing, awake blinking, moving chat dots and floating Zzz',()=>{
  const html=fs.readFileSync(path.join(root,'src/index.template.html'),'utf8');
  const css=fs.readFileSync(path.join(root,'src/style.css'),'utf8');
- for(const layer of ['mascot-doze','mascot-chat','mascot-chat-dot','mascot-zzz'])assert.ok(html.includes('class="'+layer+'"'));
- assert.match(css,/mascot-doze 16\.4s ease-in-out infinite/);
- assert.match(css,/mascot-chat 16\.4s ease-in-out infinite/);
- assert.match(css,/mascot-zzz 16\.4s ease-in-out infinite/);
- assert.match(css,/@keyframes mascot-doze\{0%,25%,28%,57%,78%,100%\{opacity:0\}26%,27%,61%,73%\{opacity:1/);
+ for(const layer of ['mascot-doze','mascot-wait-blink','mascot-chat','mascot-chat-dot','mascot-zzz'])assert.ok(html.includes('class="'+layer+'"'));
+ assert.match(css,/#mascot-slot\.is-dozing \.mascot-doze\{opacity:1/);
+ assert.match(css,/#mascot-slot\.is-dozing \.mascot-chat\{opacity:0/);
+ assert.match(css,/#mascot-slot\.is-dozing \.mascot-zzz\{opacity:\.9/);
+ assert.doesNotMatch(css,/@keyframes mascot-doze\{/);
+ assert.match(css,/mascot-zzz-float 2\.8s ease-in-out infinite/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{#mascot-slot \.mascot-zzz\{opacity:0!important/);
 });

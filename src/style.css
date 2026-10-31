@@ -21,13 +21,16 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 #mascot-slot[data-state=waiting] [data-pose=waiting],#mascot-slot[data-state=reading] [data-pose=reading],#mascot-slot[data-state=relaxed] [data-pose=relaxed],#mascot-slot[data-state=focused] [data-pose=focused],#mascot-slot[data-state=finished] [data-pose=finished]{opacity:1}
 .mascot-blink,.mascot-doze{opacity:0}
 #mascot-slot[data-state=reading] [data-pose=reading] .mascot-blink,#mascot-slot[data-state=relaxed] [data-pose=relaxed] .mascot-blink,#mascot-slot[data-state=focused] [data-pose=focused] .mascot-blink{animation:mascot-blink 9.7s linear infinite}
-#mascot-slot[data-state=waiting] .mascot-doze{animation:mascot-doze 16.4s ease-in-out infinite}
+.mascot-doze{transition:opacity 600ms ease-in-out}
+.mascot-wait-blink{opacity:0}
+#mascot-slot[data-state=waiting]:not(.is-dozing) .mascot-wait-blink{animation:mascot-blink 9.7s linear infinite}
+#mascot-slot.is-dozing .mascot-doze{opacity:1}
 .mascot-page{visibility:hidden;transform-box:view-box;transform-origin:615px 939px}
 #mascot-slot.is-turning .mascot-page{visibility:visible;animation:mascot-page-turn 1100ms ease-in-out 1 forwards}
 .mascot-wave{transform-box:view-box;transform-origin:815px 980px}
 #mascot-slot[data-state=finished] .mascot-wave{animation:mascot-wave 7.6s ease-in-out infinite}
 
-#mascot-slot.is-still *{animation:none!important}
+#mascot-slot.is-still *{animation:none!important;transition:none!important}
 #mascot-slot.is-still .mascot-page{visibility:hidden!important}
 #mascot-slot.is-still .mascot-blink,#mascot-slot.is-still .mascot-doze{opacity:0!important}
 .stage-rules li.rule-notice{padding:13px 15px;border:1px solid #e9d5b2;border-left:3px solid #c8a46c;border-radius:12px;background:#fbf1df;color:#725f40;font-size:clamp(16px,1.32vw,23px);line-height:1.8}
@@ -70,7 +73,6 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 
 @keyframes mascot-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes mascot-blink{0%,44%,47%,78%,81%,100%{opacity:0}45%,46%,79%,80%{opacity:1}}
-@keyframes mascot-doze{0%,25%,28%,57%,78%,100%{opacity:0}26%,27%,61%,73%{opacity:1}}
 /* A single sheet goes right -> spine -> left, settles, then resets invisibly. */
 @keyframes mascot-page-turn{0%{transform:translateY(0) scaleX(1);opacity:0}8%{opacity:1}46%{transform:translateY(-35px) scaleX(.06);opacity:1}54%{transform:translateY(-35px) scaleX(-.06);opacity:1}94%{transform:translateY(0) scaleX(-1);opacity:1}100%{transform:translateY(0) scaleX(-1);opacity:0}}
 @keyframes mascot-wave{0%,32%,100%{transform:rotate(0)}7%,21%{transform:rotate(-4deg)}14%,28%{transform:rotate(3deg)}}
@@ -79,15 +81,18 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 .attendance-fields{grid-column:1/-1}.attendance-fields .attendance-grid{margin-top:9px}
 @media(prefers-reduced-motion:reduce){#mascot-slot .mascot-blink,#mascot-slot .mascot-doze{opacity:0!important}}
 
-.mascot-zzz{opacity:0;fill:#8ca5b8;font-family:'Segoe UI',sans-serif;font-weight:700}
-#mascot-slot[data-state=waiting] .mascot-zzz{animation:mascot-zzz 16.4s ease-in-out infinite}
-@keyframes mascot-zzz{0%,57%,78%,100%{opacity:0;transform:translateY(10px)}62%{opacity:.9;transform:translateY(0)}73%{opacity:.8;transform:translateY(-22px)}}
+.mascot-zzz{opacity:0;fill:#8ca5b8;font-family:'Segoe UI',sans-serif;font-weight:700;transform:translateY(5px);transition:opacity 600ms ease-in-out,transform 600ms ease-in-out}
+#mascot-slot.is-dozing .mascot-zzz{opacity:.9;transform:translateY(-8px);transition-delay:200ms}
+#mascot-slot[data-state=waiting] .mascot-zzz text{animation:mascot-zzz-float 2.8s ease-in-out infinite}
+.mascot-zzz text:nth-child(2){animation-delay:.3s}.mascot-zzz text:nth-child(3){animation-delay:.6s}
+@keyframes mascot-zzz-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 #mascot-slot.is-still .mascot-zzz{opacity:0!important}
 @media(prefers-reduced-motion:reduce){#mascot-slot .mascot-zzz{opacity:0!important}}
 
-.mascot-chat{opacity:1}
-#mascot-slot[data-state=waiting] .mascot-chat{animation:mascot-chat 16.4s ease-in-out infinite}
+.mascot-chat{opacity:1;transition:opacity 600ms ease-in-out}
+#mascot-slot.is-dozing .mascot-chat{opacity:0}
 #mascot-slot[data-state=waiting] .mascot-chat-dot{animation:mascot-chat-dot 2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 .mascot-chat-dot:nth-child(2){animation-delay:.22s!important}.mascot-chat-dot:nth-child(3){animation-delay:.44s!important}
-@keyframes mascot-chat{0%,54%,82%,100%{opacity:1}59%,76%{opacity:0}}
 @keyframes mascot-chat-dot{0%,60%,100%{opacity:.45;transform:translateY(0)}30%{opacity:1;transform:translateY(-9px)}}
+#mascot-slot.is-still .mascot-wait-blink{opacity:0!important}
+@media(prefers-reduced-motion:reduce){#mascot-slot .mascot-wait-blink{opacity:0!important}}

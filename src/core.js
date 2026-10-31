@@ -10,7 +10,7 @@
   const entryNotice = { id: 'entry-cover-notice', highlight: true, until: 'start', text: '考試開始前，請勿翻閱試卷內頁或提前作答，僅可閱讀封面說明。請等候監考人員宣布開始。' };
   const defaults = {
     version: 1, contentRevision: 2, title: '微積分1', subtitle: '期中考試', className: '', room: '',
-    blackboardVersion: 1, noticeVersion: 1, templateId: 'exam', teacher: '', questionCount: null,
+    blackboardVersion: 1, noticeVersion: 2, templateId: 'exam', teacher: '', questionCount: null,
     attendance: { expected: null, present: null, absent: null, manualOrder: [] },
     admissionEnabled: true, preparationMinutes: 3,
     showClass: true, showRoom: true, showTeacher: true, showQuestions: true, showAttendance: true,
@@ -98,7 +98,7 @@
     Object.assign(c, { subtitle: '小考', start: '17:30', duration: 50, preparationMinutes: 3, showRoom: false });
     c.events = { half: { anchor: 'end', offset: -20, label: '剩餘20分鐘提醒' }, final: { anchor: 'end', offset: -5 } };
     c.phases = [
-      { id: 'entry', anchor: 'admission', offset: 0, title: '考前準備', tone: 'peach', rules: [clone(entryNotice), { text: '請收妥與考試無關的物品，準備作答。' }, { text: '請將學生證放在桌面右上角。' }] },
+      { id: 'entry', anchor: 'admission', offset: 0, title: '考前準備', tone: 'peach', rules: [{ text: '請收妥與考試無關的物品，準備作答。' }] },
       { id: 'exam', anchor: 'start', offset: 0, title: '考試進行中', tone: 'sage', rules: [{ text: '考試已開始，請安靜作答。' }, { text: '請勿與其他同學交談。' }, { text: '考試加油！' }] },
       clone(defaults.phases.find(p => p.id === 'last')), clone(defaults.phases.find(p => p.id === 'finished'))
     ];
@@ -171,6 +171,13 @@
       if (c.templateId === 'quiz') {
         if (c.subtitle === '隨堂測驗') c.subtitle = '小考';
         for (const p of c.phases || []) if (p.id === 'finished') p.rules = p.rules.filter(r => r.text !== '請留在座位，待助教清點並確認試卷份數後再離場。');
+      }
+    }
+    if (c.noticeVersion === 1) {
+      c.noticeVersion = 2;
+      if (c.templateId === 'quiz') {
+        const removed = new Set([entryNotice.text, '請將學生證放在桌面右上角。']);
+        for (const p of c.phases || []) if (p.id === 'entry') p.rules = p.rules.filter(r => !removed.has(r.text));
       }
     }
     return c;

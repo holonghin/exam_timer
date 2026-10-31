@@ -29,13 +29,16 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 #mascot-slot[data-state=waiting] [data-pose=waiting],#mascot-slot[data-state=reading] [data-pose=reading],#mascot-slot[data-state=relaxed] [data-pose=relaxed],#mascot-slot[data-state=focused] [data-pose=focused],#mascot-slot[data-state=finished] [data-pose=finished]{opacity:1}
 .mascot-blink,.mascot-doze{opacity:0}
 #mascot-slot[data-state=reading] [data-pose=reading] .mascot-blink,#mascot-slot[data-state=relaxed] [data-pose=relaxed] .mascot-blink,#mascot-slot[data-state=focused] [data-pose=focused] .mascot-blink{animation:mascot-blink 9.7s linear infinite}
-#mascot-slot[data-state=waiting] .mascot-doze{animation:mascot-doze 16.4s ease-in-out infinite}
+.mascot-doze{transition:opacity 600ms ease-in-out}
+.mascot-wait-blink{opacity:0}
+#mascot-slot[data-state=waiting]:not(.is-dozing) .mascot-wait-blink{animation:mascot-blink 9.7s linear infinite}
+#mascot-slot.is-dozing .mascot-doze{opacity:1}
 .mascot-page{visibility:hidden;transform-box:view-box;transform-origin:615px 939px}
 #mascot-slot.is-turning .mascot-page{visibility:visible;animation:mascot-page-turn 1100ms ease-in-out 1 forwards}
 .mascot-wave{transform-box:view-box;transform-origin:815px 980px}
 #mascot-slot[data-state=finished] .mascot-wave{animation:mascot-wave 7.6s ease-in-out infinite}
 
-#mascot-slot.is-still *{animation:none!important}
+#mascot-slot.is-still *{animation:none!important;transition:none!important}
 #mascot-slot.is-still .mascot-page{visibility:hidden!important}
 #mascot-slot.is-still .mascot-blink,#mascot-slot.is-still .mascot-doze{opacity:0!important}
 .stage-rules li.rule-notice{padding:13px 15px;border:1px solid #e9d5b2;border-left:3px solid #c8a46c;border-radius:12px;background:#fbf1df;color:#725f40;font-size:clamp(16px,1.32vw,23px);line-height:1.8}
@@ -78,7 +81,6 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 
 @keyframes mascot-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes mascot-blink{0%,44%,47%,78%,81%,100%{opacity:0}45%,46%,79%,80%{opacity:1}}
-@keyframes mascot-doze{0%,25%,28%,57%,78%,100%{opacity:0}26%,27%,61%,73%{opacity:1}}
 /* A single sheet goes right -> spine -> left, settles, then resets invisibly. */
 @keyframes mascot-page-turn{0%{transform:translateY(0) scaleX(1);opacity:0}8%{opacity:1}46%{transform:translateY(-35px) scaleX(.06);opacity:1}54%{transform:translateY(-35px) scaleX(-.06);opacity:1}94%{transform:translateY(0) scaleX(-1);opacity:1}100%{transform:translateY(0) scaleX(-1);opacity:0}}
 @keyframes mascot-wave{0%,32%,100%{transform:rotate(0)}7%,21%{transform:rotate(-4deg)}14%,28%{transform:rotate(3deg)}}
@@ -87,18 +89,21 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 .attendance-fields{grid-column:1/-1}.attendance-fields .attendance-grid{margin-top:9px}
 @media(prefers-reduced-motion:reduce){#mascot-slot .mascot-blink,#mascot-slot .mascot-doze{opacity:0!important}}
 
-.mascot-zzz{opacity:0;fill:#8ca5b8;font-family:'Segoe UI',sans-serif;font-weight:700}
-#mascot-slot[data-state=waiting] .mascot-zzz{animation:mascot-zzz 16.4s ease-in-out infinite}
-@keyframes mascot-zzz{0%,57%,78%,100%{opacity:0;transform:translateY(10px)}62%{opacity:.9;transform:translateY(0)}73%{opacity:.8;transform:translateY(-22px)}}
+.mascot-zzz{opacity:0;fill:#8ca5b8;font-family:'Segoe UI',sans-serif;font-weight:700;transform:translateY(5px);transition:opacity 600ms ease-in-out,transform 600ms ease-in-out}
+#mascot-slot.is-dozing .mascot-zzz{opacity:.9;transform:translateY(-8px);transition-delay:200ms}
+#mascot-slot[data-state=waiting] .mascot-zzz text{animation:mascot-zzz-float 2.8s ease-in-out infinite}
+.mascot-zzz text:nth-child(2){animation-delay:.3s}.mascot-zzz text:nth-child(3){animation-delay:.6s}
+@keyframes mascot-zzz-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 #mascot-slot.is-still .mascot-zzz{opacity:0!important}
 @media(prefers-reduced-motion:reduce){#mascot-slot .mascot-zzz{opacity:0!important}}
 
-.mascot-chat{opacity:1}
-#mascot-slot[data-state=waiting] .mascot-chat{animation:mascot-chat 16.4s ease-in-out infinite}
+.mascot-chat{opacity:1;transition:opacity 600ms ease-in-out}
+#mascot-slot.is-dozing .mascot-chat{opacity:0}
 #mascot-slot[data-state=waiting] .mascot-chat-dot{animation:mascot-chat-dot 2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 .mascot-chat-dot:nth-child(2){animation-delay:.22s!important}.mascot-chat-dot:nth-child(3){animation-delay:.44s!important}
-@keyframes mascot-chat{0%,54%,82%,100%{opacity:1}59%,76%{opacity:0}}
 @keyframes mascot-chat-dot{0%,60%,100%{opacity:.45;transform:translateY(0)}30%{opacity:1;transform:translateY(-9px)}}
+#mascot-slot.is-still .mascot-wait-blink{opacity:0!important}
+@media(prefers-reduced-motion:reduce){#mascot-slot .mascot-wait-blink{opacity:0!important}}
 </style>
 </head>
 <body>
@@ -131,7 +136,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 
   </defs>
   <g class="mascot-figure">
-    <g class="mascot-pose" data-pose="waiting"><g transform="translate(0 65)"><use href="#art-waiting"/><g class="mascot-doze" clip-path="url(#waiting-eye-window)"><use href="#art-waiting-sleep"/></g><g class="mascot-chat"><path d="M38 320C38 270 82 249 137 249S236 273 236 320C236 357 214 381 181 387L195 422 156 391C89 396 38 371 38 320Z" fill="#fffdf8" stroke="#93a7b2" stroke-width="9" stroke-linejoin="round"/><g fill="#8b9fae"><circle class="mascot-chat-dot" cx="96" cy="322" r="9"/><circle class="mascot-chat-dot" cx="138" cy="322" r="9"/><circle class="mascot-chat-dot" cx="180" cy="322" r="9"/></g></g><g class="mascot-zzz"><text x="1100" y="380" font-size="72">Z</text><text x="1150" y="295" font-size="58">z</text><text x="1190" y="220" font-size="46">z</text></g></g></g>
+    <g class="mascot-pose" data-pose="waiting"><g transform="translate(0 65)"><use href="#art-waiting"/><g class="mascot-doze" clip-path="url(#waiting-eye-window)"><use href="#art-waiting-sleep"/></g><g class="mascot-wait-blink" clip-path="url(#waiting-eye-window)"><use href="#art-waiting-sleep"/></g><g class="mascot-chat"><path d="M38 320C38 270 82 249 137 249S236 273 236 320C236 357 214 381 181 387L195 422 156 391C89 396 38 371 38 320Z" fill="#fffdf8" stroke="#93a7b2" stroke-width="9" stroke-linejoin="round"/><g fill="#8b9fae"><circle class="mascot-chat-dot" cx="96" cy="322" r="9"/><circle class="mascot-chat-dot" cx="138" cy="322" r="9"/><circle class="mascot-chat-dot" cx="180" cy="322" r="9"/></g></g><g class="mascot-zzz"><text x="1100" y="380" font-size="72">Z</text><text x="1150" y="295" font-size="58">z</text><text x="1190" y="220" font-size="46">z</text></g></g></g>
     <g class="mascot-pose" data-pose="reading"><use href="#art-reading"/><g class="mascot-blink" clip-path="url(#reading-eye-window)"><use href="#art-reading-blink"/></g></g>
 <g class="mascot-pose" data-pose="relaxed"><use href="#art-relaxed"/><g class="mascot-blink" clip-path="url(#reading-eye-window)"><use href="#art-reading-blink"/></g></g>
 <g class="mascot-pose" data-pose="focused"><use href="#art-focused"/><g class="mascot-blink" clip-path="url(#reading-eye-window)"><use href="#art-reading-blink"/></g></g>
@@ -220,7 +225,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
   const entryNotice = { id: 'entry-cover-notice', highlight: true, until: 'start', text: '考試開始前，請勿翻閱試卷內頁或提前作答，僅可閱讀封面說明。請等候監考人員宣布開始。' };
   const defaults = {
     version: 1, contentRevision: 2, title: '微積分1', subtitle: '期中考試', className: '', room: '',
-    blackboardVersion: 1, noticeVersion: 1, templateId: 'exam', teacher: '', questionCount: null,
+    blackboardVersion: 1, noticeVersion: 2, templateId: 'exam', teacher: '', questionCount: null,
     attendance: { expected: null, present: null, absent: null, manualOrder: [] },
     admissionEnabled: true, preparationMinutes: 3,
     showClass: true, showRoom: true, showTeacher: true, showQuestions: true, showAttendance: true,
@@ -308,7 +313,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
     Object.assign(c, { subtitle: '小考', start: '17:30', duration: 50, preparationMinutes: 3, showRoom: false });
     c.events = { half: { anchor: 'end', offset: -20, label: '剩餘20分鐘提醒' }, final: { anchor: 'end', offset: -5 } };
     c.phases = [
-      { id: 'entry', anchor: 'admission', offset: 0, title: '考前準備', tone: 'peach', rules: [clone(entryNotice), { text: '請收妥與考試無關的物品，準備作答。' }, { text: '請將學生證放在桌面右上角。' }] },
+      { id: 'entry', anchor: 'admission', offset: 0, title: '考前準備', tone: 'peach', rules: [{ text: '請收妥與考試無關的物品，準備作答。' }] },
       { id: 'exam', anchor: 'start', offset: 0, title: '考試進行中', tone: 'sage', rules: [{ text: '考試已開始，請安靜作答。' }, { text: '請勿與其他同學交談。' }, { text: '考試加油！' }] },
       clone(defaults.phases.find(p => p.id === 'last')), clone(defaults.phases.find(p => p.id === 'finished'))
     ];
@@ -381,6 +386,13 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
       if (c.templateId === 'quiz') {
         if (c.subtitle === '隨堂測驗') c.subtitle = '小考';
         for (const p of c.phases || []) if (p.id === 'finished') p.rules = p.rules.filter(r => r.text !== '請留在座位，待助教清點並確認試卷份數後再離場。');
+      }
+    }
+    if (c.noticeVersion === 1) {
+      c.noticeVersion = 2;
+      if (c.templateId === 'quiz') {
+        const removed = new Set([entryNotice.text, '請將學生證放在桌面右上角。']);
+        for (const p of c.phases || []) if (p.id === 'entry') p.rules = p.rules.filter(r => !removed.has(r.text));
       }
     }
     return c;
@@ -567,7 +579,34 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
     function dispose() { enabled = false; clear(); turning = false; onRest(); }
     return { setEnabled, complete, dispose };
   }
-  return { poseAt, createPageTurner };
+  function createDozer({ onSleep, onWake, random = Math.random,
+    setTimer = setTimeout, clearTimer = clearTimeout, fadeDuration = 600 }) {
+    let enabled = false, timer = null;
+    const sample = (min, max) => min + Math.floor(Math.max(0, Math.min(1, random())) * (max - min));
+    function clear() { if (timer !== null) clearTimer(timer); timer = null; }
+    function waitAwake(afterFade = 0) {
+      timer = setTimer(() => {
+        timer = null;
+        if (!enabled) return;
+        onSleep();
+        // The 6–10 second rest starts after the eyelids finish closing.
+        timer = setTimer(() => {
+          timer = null;
+          if (!enabled) return;
+          onWake(); waitAwake(fadeDuration);
+        }, fadeDuration + sample(6000, 10000));
+      }, afterFade + sample(8000, 12000));
+    }
+    function setEnabled(value) {
+      const next = !!value;
+      if (next === enabled) return;
+      enabled = next; clear(); onWake();
+      if (enabled) waitAwake();
+    }
+    function dispose() { enabled = false; clear(); onWake(); }
+    return { setEnabled, dispose };
+  }
+  return { poseAt, createPageTurner, createDozer };
 });
 </script>
   <script>(() => {
@@ -597,6 +636,10 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
     onTurn: () => $('mascot-slot').classList.add('is-turning'),
     onRest: () => $('mascot-slot').classList.remove('is-turning')
   });
+  const dozer = window.ExamMascot.createDozer({
+    onSleep: () => $('mascot-slot').classList.add('is-dozing'),
+    onWake: () => $('mascot-slot').classList.remove('is-dozing')
+  });
   const pageSheet = document.querySelector('.mascot-page');
   pageSheet.addEventListener('animationend', event => {
     if (event.animationName === 'mascot-page-turn') pageTurner.complete();
@@ -604,10 +647,12 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
   function syncMascot(times, instant) {
     const pose = window.ExamMascot.poseAt(times, instant);
     $('mascot-slot').dataset.state = pose;
-    pageTurner.setEnabled(['reading', 'relaxed', 'focused'].includes(pose) && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
+    const animated = config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden;
+    pageTurner.setEnabled(['reading', 'relaxed', 'focused'].includes(pose) && animated);
+    dozer.setEnabled(pose === 'waiting' && animated);
   }
   motionPreference.addEventListener('change', () => syncMascot(C.schedule(config), now()));
-  window.addEventListener('pagehide', () => pageTurner.dispose());
+  window.addEventListener('pagehide', () => { pageTurner.dispose(); dozer.dispose(); });
   let scrollPaused = reducedMotion, hovering = false, focusing = false, lastFrame = 0, scrollPosition = 0, pauseUntil = 0;
   let signature = '', overflow = false;
   const uid = () => 'item-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);

@@ -42,5 +42,32 @@
     function dispose() { enabled = false; clear(); turning = false; onRest(); }
     return { setEnabled, complete, dispose };
   }
-  return { poseAt, createPageTurner };
+  function createDozer({ onSleep, onWake, random = Math.random,
+    setTimer = setTimeout, clearTimer = clearTimeout, fadeDuration = 600 }) {
+    let enabled = false, timer = null;
+    const sample = (min, max) => min + Math.floor(Math.max(0, Math.min(1, random())) * (max - min));
+    function clear() { if (timer !== null) clearTimer(timer); timer = null; }
+    function waitAwake(afterFade = 0) {
+      timer = setTimer(() => {
+        timer = null;
+        if (!enabled) return;
+        onSleep();
+        // The 6–10 second rest starts after the eyelids finish closing.
+        timer = setTimer(() => {
+          timer = null;
+          if (!enabled) return;
+          onWake(); waitAwake(fadeDuration);
+        }, fadeDuration + sample(6000, 10000));
+      }, afterFade + sample(8000, 12000));
+    }
+    function setEnabled(value) {
+      const next = !!value;
+      if (next === enabled) return;
+      enabled = next; clear(); onWake();
+      if (enabled) waitAwake();
+    }
+    function dispose() { enabled = false; clear(); onWake(); }
+    return { setEnabled, dispose };
+  }
+  return { poseAt, createPageTurner, createDozer };
 });

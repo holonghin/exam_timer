@@ -25,6 +25,10 @@
     onTurn: () => $('mascot-slot').classList.add('is-turning'),
     onRest: () => $('mascot-slot').classList.remove('is-turning')
   });
+  const dozer = window.ExamMascot.createDozer({
+    onSleep: () => $('mascot-slot').classList.add('is-dozing'),
+    onWake: () => $('mascot-slot').classList.remove('is-dozing')
+  });
   const pageSheet = document.querySelector('.mascot-page');
   pageSheet.addEventListener('animationend', event => {
     if (event.animationName === 'mascot-page-turn') pageTurner.complete();
@@ -32,10 +36,12 @@
   function syncMascot(times, instant) {
     const pose = window.ExamMascot.poseAt(times, instant);
     $('mascot-slot').dataset.state = pose;
-    pageTurner.setEnabled(['reading', 'relaxed', 'focused'].includes(pose) && config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden);
+    const animated = config.mascotVisible && config.mascotAnimated && !motionPreference.matches && !document.hidden;
+    pageTurner.setEnabled(['reading', 'relaxed', 'focused'].includes(pose) && animated);
+    dozer.setEnabled(pose === 'waiting' && animated);
   }
   motionPreference.addEventListener('change', () => syncMascot(C.schedule(config), now()));
-  window.addEventListener('pagehide', () => pageTurner.dispose());
+  window.addEventListener('pagehide', () => { pageTurner.dispose(); dozer.dispose(); });
   let scrollPaused = reducedMotion, hovering = false, focusing = false, lastFrame = 0, scrollPosition = 0, pauseUntil = 0;
   let signature = '', overflow = false;
   const uid = () => 'item-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);

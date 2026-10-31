@@ -60,10 +60,30 @@ test('quiz fields stay available and can be explicitly enabled',()=>{
 test('exam and quiz suspend-submission rule is highlighted by default',()=>{
  for(const id of ['exam','quiz']){const c=C.makeTemplate(id);assert.equal(c.phases.find(p=>p.id==='last').rules.find(r=>r.text.includes('暫停提前交卷')).highlight,true);}
 });
-test('both templates show revised pre-exam notice until shifted start',()=>{
- for(const id of ['exam','quiz']){let c=C.makeTemplate(id);c=C.shiftStart(c,90);const t=C.schedule(c);
+test('exam shows revised pre-exam notice until shifted start',()=>{
+ for(const id of ['exam']){let c=C.makeTemplate(id);c=C.shiftStart(c,90);const t=C.schedule(c);
  assert.ok(C.stateAt(c,t.start-1).rules.some(r=>r.includes('請等候監考人員宣布開始')));
  assert.ok(!C.stateAt(c,t.start).rules.some(r=>r.includes('請等候監考人員宣布開始')));}
+});
+
+test('quiz preparation omits cover and student-card instructions, including shifted starts',()=>{
+ const c=C.shiftStart(C.makeTemplate('quiz'),90),t=C.schedule(c);
+ assert.deepEqual(C.stateAt(c,t.admission).rules,['請收妥與考試無關的物品，準備作答。']);
+ assert.deepEqual(C.stateAt(c,t.start-1).rules,['請收妥與考試無關的物品，準備作答。']);
+ const exam=C.makeTemplate('exam').phases.find(p=>p.id==='entry').rules;
+ assert.ok(exam.some(r=>r.id==='entry-cover-notice'));assert.ok(exam.some(r=>r.text==='請將學生證放在桌面右上角。'));
+});
+
+test('old quiz defaults update once while custom preparation text and schedule survive',()=>{
+ const c=C.makeTemplate('quiz');c.noticeVersion=1;c.start='17:36';
+ c.phases.find(p=>p.id==='entry').rules.push(C.clone(C.defaults.phases[0].rules[0]),{text:'請將學生證放在桌面右上角。'},{text:'現場自訂提醒'});
+ const next=C.upgrade(c),rules=next.phases.find(p=>p.id==='entry').rules;
+ assert.equal(next.noticeVersion,2);assert.deepEqual(C.validate(next),[]);assert.deepEqual(C.schedule(next),C.schedule(c));
+ assert.deepEqual(rules.map(r=>r.text),['請收妥與考試無關的物品，準備作答。','現場自訂提醒']);
+ assert.deepEqual(C.upgrade(next),next);
+ // A later deliberate edit is not removed again on reload.
+ rules.push({text:'請將學生證放在桌面右上角。'});assert.deepEqual(C.upgrade(next),next);
+ const exam=C.makeTemplate('exam');exam.noticeVersion=1;assert.deepEqual(C.upgrade(exam).phases,exam.phases);
 });
 test('clear creates an empty draft which cannot apply without basic information',()=>{
  const c=C.makeTemplate('blank');assert.equal(c.title,'');assert.equal(c.date,'');assert.equal(c.start,'');assert.equal(c.duration,null);
