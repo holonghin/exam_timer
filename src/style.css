@@ -27,7 +27,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 #mascot-slot.is-dozing .mascot-doze{opacity:1}
 .mascot-page{visibility:hidden;transform-box:view-box;transform-origin:615px 939px}
 #mascot-slot.is-turning .mascot-page{visibility:visible;animation:mascot-page-turn 1100ms ease-in-out 1 forwards}
-.mascot-wave{transform-box:view-box;transform-origin:815px 980px}
+.mascot-wave{transform-box:view-box;transform-origin:835px 980px}
 #mascot-slot[data-state=finished] .mascot-wave{animation:mascot-wave 7.6s ease-in-out infinite}
 
 #mascot-slot.is-still *{animation:none!important;transition:none!important}

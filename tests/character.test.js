@@ -41,7 +41,7 @@ test('standalone embeds each cutout once and preserves separate waiting/reading/
  assert.doesNotMatch(html,/\{\{MASCOT:/);assert.ok(Buffer.byteLength(html)<3.5*1024*1024);
  const template=fs.readFileSync(path.join(root,'src/index.template.html'),'utf8');
  for(const pose of ['waiting','reading','relaxed','focused','finished'])assert.ok(template.includes('data-pose="'+pose+'"'));
- assert.match(template,/<g class="mascot-wave"><use href="#art-finished-arm"\/><\/g><use href="#art-finished-body"/);
+ assert.match(template,/<g class="mascot-wave"><use href="#art-finished-arm"(?: transform="[^"]+")?\/><\/g><use href="#art-finished-body"/);
  assert.ok(template.indexOf('class="mascot-wave"') < template.indexOf('<use href="#art-finished-body"'));
  assert.match(template,/clip-path="url\(#reading-eye-window\)"/);
 });

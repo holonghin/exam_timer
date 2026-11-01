@@ -15,3 +15,7 @@ Use case: identity-preserve. Asset type: aligned transparent animation layer for
 
 Use case: identity-preserve. Asset type: aligned transparent animation layer for the SAME finished mascot. Input image is the exact source to edit, not a loose style inspiration. Extract ONLY the existing raised screen-right blue-sleeved arm and open waving hand, from its shoulder joint at approximately x810 y960 to the fingertips near x1170 y710. Keep this arm's exact original pixels, colors, proportions, outline and original position on the SAME 1254 by 1254 square canvas. Make literally everything else fully transparent: remove the head, face, hair, torso, other hand, book, desk and books. Include the complete sleeve all the way to the shoulder with a rounded overlap at the shoulder joint for rotation. Do NOT recenter, enlarge or redesign the arm. One isolated arm layer in its original coordinates. Preserve the exact original 1254x1254 canvas and scale. Soft hand-drawn watercolor/pencil texture, real alpha transparency, no text, no new objects.
 
+
+## 揮手比例微調（2026/11/01）
+
+沿用既有圖片，透過SVG圖層將手臂等比例縮為78%，並微調肩膀連接位置。沒有重新繪製人物或修改點陣素材。
