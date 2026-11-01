@@ -49,7 +49,7 @@
       ] },
       { id: 'finished', anchor: 'end', offset: 0, title: '考試結束', tone: 'lavender', rules: [
         { text: '考試時間已結束，請立即停止作答。' }, { text: '請依助教指示交卷。' },
-        { text: '請留在座位，待助教清點並確認試卷份數後再離場。' }, { text: '大家辛苦了！你們很棒！' }
+        { text: '請留在座位，待助教清點並確認試卷份數後再離場。', highlight: true }, { text: '大家辛苦了！你們很棒！' }
       ] }
     ]
   };
