@@ -85,7 +85,6 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 @keyframes mascot-page-turn{0%{transform:translateY(0) scaleX(1);opacity:0}8%{opacity:1}46%{transform:translateY(-35px) scaleX(.06);opacity:1}54%{transform:translateY(-35px) scaleX(-.06);opacity:1}94%{transform:translateY(0) scaleX(-1);opacity:1}100%{transform:translateY(0) scaleX(-1);opacity:0}}
 @keyframes mascot-wave{0%,32%,100%{transform:rotate(0)}7%,21%{transform:rotate(-4deg)}14%,28%{transform:rotate(3deg)}}
 .template-picker{gap:10px;margin-bottom:24px;align-items:center;flex-wrap:wrap}
-.template-picker>button[aria-pressed=true]{background:#e5eddd;border-color:#a5b79a;color:#435c3c}
 .attendance-fields{grid-column:1/-1}.attendance-fields .attendance-grid{margin-top:9px}
 @media(prefers-reduced-motion:reduce){#mascot-slot .mascot-blink,#mascot-slot .mascot-doze{opacity:0!important}}
 
@@ -180,7 +179,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
       <nav class="tabs" aria-label="設定分類"><button type="button" class="tab active" data-tab="general" aria-pressed="true">考試資訊</button><button type="button" class="tab" data-tab="schedule" aria-pressed="false">時間調整</button><button type="button" class="tab" data-tab="rules" aria-pressed="false">規則與階段</button><button type="button" class="tab" data-tab="simulation" aria-pressed="false">模擬測試</button></nav>
       <div class="dialog-content">
         <section data-panel="general">
-  <div class="template-picker" role="group" aria-label="設定模板"><button type="button" data-template="exam" aria-pressed="true">Calc Exam</button><button type="button" data-template="quiz" aria-pressed="false">Calc Quiz</button><button type="button" data-template="blank" aria-pressed="false">清空</button></div>
+  <div class="template-picker" role="group" aria-label="設定模板"><button type="button" data-template="exam">Calc Exam</button><button type="button" data-template="quiz">Calc Quiz</button><button type="button" data-template="blank">清空</button></div>
   <div class="field-grid">
     <label>考試名稱<input name="title" maxlength="100" required></label><label>考試資訊<input name="subtitle" maxlength="100"></label>
     <div class="optional-field"><label class="check"><input name="showClass" type="checkbox">班別</label><input name="className" aria-label="班別" maxlength="100" placeholder="例如：模05–09班"></div>
@@ -264,7 +263,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
       ] },
       { id: 'finished', anchor: 'end', offset: 0, title: '考試結束', tone: 'lavender', rules: [
         { text: '考試時間已結束，請立即停止作答。' }, { text: '請依助教指示交卷。' },
-        { text: '請留在座位，待助教清點並確認試卷份數後再離場。' }, { text: '大家辛苦了！你們很棒！' }
+        { text: '請留在座位，待助教清點並確認試卷份數後再離場。', highlight: true }, { text: '大家辛苦了！你們很棒！' }
       ] }
     ]
   };
@@ -393,6 +392,11 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
       if (c.templateId === 'quiz') {
         const removed = new Set([entryNotice.text, '請將學生證放在桌面右上角。']);
         for (const p of c.phases || []) if (p.id === 'entry') p.rules = p.rules.filter(r => !removed.has(r.text));
+      }
+    }
+    if (c.templateId === 'exam' && Array.isArray(c.phases)) {
+      for (const p of c.phases) if (p.anchor === 'end' && p.offset === 0 && Array.isArray(p.rules)) {
+        for (const r of p.rules) if (r.text === '請留在座位，待助教清點並確認試卷份數後再離場。' && r.highlight === undefined) r.highlight = true;
       }
     }
     return c;
@@ -798,7 +802,6 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
   const fields = ['title', 'subtitle', 'className', 'room', 'teacher', 'questionCount', 'date', 'admission', 'admissionEnabled', 'start', 'duration', 'extension', 'preparationMinutes', 'showClass', 'showRoom', 'showTeacher', 'showQuestions', 'showAttendance', 'autoScroll', 'scrollSpeed', 'mascotVisible', 'mascotAnimated'];
   function fillFields() {
     for (const name of fields) { const input = $('settings-form').elements.namedItem(name); if (input.type === 'checkbox') input.checked = draft[name]; else input.value = draft[name] ?? ''; }
-    document.querySelectorAll('[data-template]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.template === draft.templateId)));
     $('admission-field').hidden = !draft.admissionEnabled;
     $('preparation-field').hidden = draft.admissionEnabled;
     updateOptionalFields();

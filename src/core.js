@@ -180,6 +180,11 @@
         for (const p of c.phases || []) if (p.id === 'entry') p.rules = p.rules.filter(r => !removed.has(r.text));
       }
     }
+    if (c.templateId === 'exam' && Array.isArray(c.phases)) {
+      for (const p of c.phases) if (p.anchor === 'end' && p.offset === 0 && Array.isArray(p.rules)) {
+        for (const r of p.rules) if (r.text === '請留在座位，待助教清點並確認試卷份數後再離場。' && r.highlight === undefined) r.highlight = true;
+      }
+    }
     return c;
   }
   function parseTime(value) {

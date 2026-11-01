@@ -60,6 +60,22 @@ test('quiz fields stay available and can be explicitly enabled',()=>{
 test('exam and quiz suspend-submission rule is highlighted by default',()=>{
  for(const id of ['exam','quiz']){const c=C.makeTemplate(id);assert.equal(c.phases.find(p=>p.id==='last').rules.find(r=>r.text.includes('暫停提前交卷')).highlight,true);}
 });
+
+test('exam end-of-exam seat instruction is highlighted by default and absent from quiz',()=>{
+ const c=C.makeTemplate('exam'),t=C.schedule(c),text='請留在座位，待助教清點並確認試卷份數後再離場。';
+ assert.equal(C.stateAt(c,t.end).ruleItems.find(r=>r.text===text).highlight,true);
+ assert.ok(!C.makeTemplate('quiz').phases.some(p=>p.rules.some(r=>r.text===text)));
+});
+
+test('old exam seat instruction gains emphasis only when unset, preserving deliberate changes',()=>{
+ const c=C.makeTemplate('exam'),phase=c.phases.find(p=>p.id==='finished'),rule=phase.rules.find(r=>r.text.includes('清點'));
+ delete rule.highlight;
+ const upgraded=C.upgrade(c);assert.equal(upgraded.phases.find(p=>p.id==='finished').rules.find(r=>r.text.includes('清點')).highlight,true);
+ assert.equal(rule.highlight,undefined);assert.deepEqual(C.upgrade(upgraded),upgraded);
+ rule.highlight=false;assert.deepEqual(C.upgrade(c),c);
+ delete rule.highlight;rule.text='自訂離場提醒';assert.deepEqual(C.upgrade(c),c);
+ phase.rules=phase.rules.filter(r=>r!==rule);assert.deepEqual(C.upgrade(c),c);
+});
 test('exam shows revised pre-exam notice until shifted start',()=>{
  for(const id of ['exam']){let c=C.makeTemplate(id);c=C.shiftStart(c,90);const t=C.schedule(c);
  assert.ok(C.stateAt(c,t.start-1).rules.some(r=>r.includes('請等候監考人員宣布開始')));

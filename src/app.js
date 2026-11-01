@@ -187,7 +187,6 @@
   const fields = ['title', 'subtitle', 'className', 'room', 'teacher', 'questionCount', 'date', 'admission', 'admissionEnabled', 'start', 'duration', 'extension', 'preparationMinutes', 'showClass', 'showRoom', 'showTeacher', 'showQuestions', 'showAttendance', 'autoScroll', 'scrollSpeed', 'mascotVisible', 'mascotAnimated'];
   function fillFields() {
     for (const name of fields) { const input = $('settings-form').elements.namedItem(name); if (input.type === 'checkbox') input.checked = draft[name]; else input.value = draft[name] ?? ''; }
-    document.querySelectorAll('[data-template]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.template === draft.templateId)));
     $('admission-field').hidden = !draft.admissionEnabled;
     $('preparation-field').hidden = draft.admissionEnabled;
     updateOptionalFields();
