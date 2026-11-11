@@ -13,7 +13,7 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="brand"><svg class="brand-bookmark" viewBox="0 0 48 48" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M11 8Q11 5 15 5H30Q34 5 34 9V41L23 34 11 41Z" fill="#c6d9bd" stroke="#819475" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11H28M16 16H25" stroke="#fff9e8" stroke-width="2.5" stroke-linecap="round"/><path d="M35 9Q36 18 44 19Q36 21 35 29Q33 21 26 19Q33 17 35 9Z" fill="#fae8b7" stroke="#c5a97b" stroke-width="1.4" stroke-linejoin="round"/><circle cx="12" cy="31" r="3.4" fill="#edc8b1"/></svg><div><h1><span id="exam-title">微積分1</span><span id="exam-subtitle">期中考試</span></h1></div></div>
-      <div class="exam-meta"><span id="exam-date">2026/10/31（六）</span><div class="meta-line"><span id="exam-class">班別：未設定</span><span id="exam-room">考場：未設定</span><span id="exam-teacher">老師：未設定</span></div><div id="exam-statistics" class="meta-line statistics" hidden></div></div>
+      <div class="exam-meta"><span class="date-line"><span id="seasonal-icon" class="seasonal-icon" aria-hidden="true"></span><span id="exam-date">2026/10/31（六）</span></span><div class="meta-line"><span id="exam-class">班別：未設定</span><span id="exam-room">考場：未設定</span><span id="exam-teacher">老師：未設定</span></div><div id="exam-statistics" class="meta-line statistics" hidden></div></div>
       <div class="header-actions"><button id="exam-code-open" class="load-exam-button">載入考試</button><button id="fullscreen" class="icon-button" aria-label="進入全螢幕" title="全螢幕（F）">⛶</button><button id="settings-open" class="icon-button" aria-label="開啟設定" title="設定">⚙</button></div>
     </header>
     <div id="simulation-banner" class="simulation-banner" hidden><strong>模擬時間 · 非即時</strong><span id="simulation-summary"></span><button id="sim-pause">暫停</button><button id="sim-exit">回到即時</button></div>
@@ -22,7 +22,6 @@
         <div class="clock-topline"><span class="little-label"><span class="live-dot"></span><span id="clock-mode">現在時間</span></span><span id="exam-range" class="little-label"></span></div>
         <div class="clock-main">
           <div class="clock" role="timer" aria-label="現在時間"><span id="clock-hm">00:00</span><span id="clock-sec">00</span></div>
-          <div id="actual-date" class="actual-date" hidden></div>
           <div id="status" class="status-pill lavender" role="status"><span class="status-dot"></span><span id="status-text">等候入場</span></div>
           <div class="countdown-zone">
             <div id="mascot-slot" data-state="waiting" aria-hidden="true">
@@ -132,6 +131,7 @@
   <script>/* INLINE_CORE */</script>
   <script>/* INLINE_PRESETS */</script>
   <script>/* INLINE_MASCOT */</script>
+  <script>/* INLINE_SEASONAL */</script>
   <script>/* INLINE_APP */</script>
 </body>
 </html>

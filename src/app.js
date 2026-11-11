@@ -2,6 +2,7 @@
   'use strict';
   const C = window.ExamCore, P = window.ExamPresets, $ = id => document.getElementById(id);
   const KEY = 'calculus-exam-timer.v1';
+  const seasonalIcon = window.SeasonalIcon.mount($('seasonal-icon'));
   const PENDING_KEY = KEY + '.prepared';
   let config = C.clone(C.defaults), draft, configRevision = 0, simulation = null, toastTimer;
   let preparedExam = null, loadSerial = 0, activeLoad = 0, publishSerial = 0;
@@ -120,8 +121,7 @@
     const instant = now(), s = C.stateAt(config, instant), p = C.parts(instant);
     syncMascot(s.t, instant);
     $('clock-hm').textContent = C.hhmm(instant); $('clock-sec').textContent = String(p.s).padStart(2, '0');
-    $('actual-date').hidden = p.date === config.date;
-    $('actual-date').textContent = (simulation ? '模擬日期' : '今天') + ' · ' + p.date.replaceAll('-', '/');
+    seasonalIcon.update();
     $('countdown-label').textContent = s.countdownLabel; $('countdown').textContent = instant >= s.t.end ? '00:00' : C.durationText(s.remaining);
     $('now-marker').style.left = s.progress * 100 + '%'; $('timeline-elapsed').style.width = s.progress * 100 + '%';
     $('timeline').setAttribute('aria-valuenow', Math.round(s.progress * 100));
