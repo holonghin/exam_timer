@@ -121,7 +121,7 @@
     syncMascot(s.t, instant);
     $('clock-hm').textContent = C.hhmm(instant); $('clock-sec').textContent = String(p.s).padStart(2, '0');
     $('actual-date').hidden = p.date === config.date;
-    $('actual-date').textContent = '現在日期 ' + p.date.replaceAll('-', ' / ');
+    $('actual-date').textContent = (simulation ? '模擬日期' : '今天') + ' · ' + p.date.replaceAll('-', '/');
     $('countdown-label').textContent = s.countdownLabel; $('countdown').textContent = instant >= s.t.end ? '00:00' : C.durationText(s.remaining);
     $('now-marker').style.left = s.progress * 100 + '%'; $('timeline-elapsed').style.width = s.progress * 100 + '%';
     $('timeline').setAttribute('aria-valuenow', Math.round(s.progress * 100));
