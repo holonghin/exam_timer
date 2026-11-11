@@ -103,14 +103,23 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 @keyframes mascot-chat-dot{0%,60%,100%{opacity:.45;transform:translateY(0)}30%{opacity:1;transform:translateY(-9px)}}
 #mascot-slot.is-still .mascot-wait-blink{opacity:0!important}
 @media(prefers-reduced-motion:reduce){#mascot-slot .mascot-wait-blink{opacity:0!important}}
+
+.load-exam-button{height:43px;font-size:13px;padding:8px 12px;white-space:nowrap}
+#load-exam-dialog{width:min(440px,94vw)}#publish-dialog{width:min(650px,94vw)}.code-form{display:flex;flex-direction:column;max-height:92vh}.code-form .dialog-content{min-height:0}
+.dialog-content .exam-code-input{font-size:30px;font-weight:650;letter-spacing:.16em;text-transform:uppercase}
+.code-form .dialog-bottom{justify-content:flex-end}.prepared-code{display:flex;flex-direction:column;gap:8px;align-items:center;margin:24px 0}.prepared-code>span{font-size:13px;color:var(--muted)}.prepared-code strong{font-size:40px;letter-spacing:.16em;font-variant-numeric:tabular-nums}
+.action-link{display:inline-block;text-decoration:none;border:1px solid #617b54;border-radius:12px;padding:10px 16px;font-size:13px}.publish-state{font-size:14px;line-height:1.7;margin:10px 0}.publish-state.ready{color:#4c7048;font-weight:650}#prepared-summary{font-size:14px;line-height:1.7;color:var(--muted)}#prepared-link{font-size:14px;color:#58734e}
+.preset-loading{min-height:100vh;display:grid;place-content:center;font-size:22px;color:var(--ink)}
+@media(max-width:760px){.load-exam-button{height:38px;padding:7px 9px;font-size:12px}.header-actions{gap:5px}.brand{min-width:0}}
 </style>
 </head>
 <body>
+  <div id="preset-loading" class="preset-loading" role="status" hidden>正在載入考試…</div>
   <div class="app-shell">
     <header class="topbar">
       <div class="brand"><svg class="brand-bookmark" viewBox="0 0 48 48" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M11 8Q11 5 15 5H30Q34 5 34 9V41L23 34 11 41Z" fill="#c6d9bd" stroke="#819475" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11H28M16 16H25" stroke="#fff9e8" stroke-width="2.5" stroke-linecap="round"/><path d="M35 9Q36 18 44 19Q36 21 35 29Q33 21 26 19Q33 17 35 9Z" fill="#fae8b7" stroke="#c5a97b" stroke-width="1.4" stroke-linejoin="round"/><circle cx="12" cy="31" r="3.4" fill="#edc8b1"/></svg><div><h1><span id="exam-title">微積分1</span><span id="exam-subtitle">期中考試</span></h1></div></div>
       <div class="exam-meta"><span id="exam-date">2026/10/31（六）</span><div class="meta-line"><span id="exam-class">班別：未設定</span><span id="exam-room">考場：未設定</span><span id="exam-teacher">老師：未設定</span></div><div id="exam-statistics" class="meta-line statistics" hidden></div></div>
-      <div class="header-actions"><button id="fullscreen" class="icon-button" aria-label="進入全螢幕" title="全螢幕（F）">⛶</button><button id="settings-open" class="icon-button" aria-label="開啟設定" title="設定">⚙</button></div>
+      <div class="header-actions"><button id="exam-code-open" class="load-exam-button">載入考試</button><button id="fullscreen" class="icon-button" aria-label="進入全螢幕" title="全螢幕（F）">⛶</button><button id="settings-open" class="icon-button" aria-label="開啟設定" title="設定">⚙</button></div>
     </header>
     <div id="simulation-banner" class="simulation-banner" hidden><strong>模擬時間 · 非即時</strong><span id="simulation-summary"></span><button id="sim-pause">暫停</button><button id="sim-exit">回到即時</button></div>
     <main class="layout">
@@ -190,7 +199,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
     <div class="attendance-fields"><label class="check"><input name="showAttendance" type="checkbox">應到、實到與缺考人數</label><div class="attendance-grid"><label>應到人數<input id="attendance-expected" type="text" inputmode="numeric" placeholder="未設定"></label><label>實到人數<input id="attendance-present" type="text" inputmode="numeric" placeholder="未設定"></label><label>缺考人數<input id="attendance-absent" type="text" inputmode="numeric" placeholder="未設定"></label></div><p id="attendance-help" class="help danger" role="status" hidden></p></div>
   </div>
   <div class="settings-block"><h3>吉祥物</h3><label class="check"><input name="mascotVisible" type="checkbox">吉祥物</label><label class="check"><input name="mascotAnimated" type="checkbox">播放動畫</label></div>
-  <div class="settings-block"><h3>畫面與儲存</h3><label class="check"><input name="autoScroll" type="checkbox">內容超出時，緩慢循環上捲</label><label>捲動速度（像素／秒）<input name="scrollSpeed" type="number" min="5" max="40" step="1"></label><div class="button-row"><button type="button" id="export-config">匯出已套用設定</button><button type="button" id="import-config">匯入設定</button><input type="file" id="import-file" accept="application/json,.json" hidden></div></div>
+  <div class="settings-block"><h3>畫面與儲存</h3><label class="check"><input name="autoScroll" type="checkbox">內容超出時，緩慢循環上捲</label><label>捲動速度（像素／秒）<input name="scrollSpeed" type="number" min="5" max="40" step="1"></label><div class="button-row"><button type="button" id="prepare-exam">預存考試</button><button type="button" id="export-config">匯出已套用設定</button><button type="button" id="import-config">匯入設定</button><input type="file" id="import-file" accept="application/json,.json" hidden></div></div>
 </section>
         <section data-panel="schedule" hidden><label class="check"><input name="admissionEnabled" type="checkbox">設定獨立入場時間</label><div class="field-grid">
           <label id="admission-field">開放入場<input name="admission" type="time" step="1"></label><label>考試開始<input name="start" type="time" step="1" required></label>
@@ -210,6 +219,19 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
       </div>
       <div class="dialog-bottom"><span id="draft-note"></span><button type="button" id="settings-cancel">取消</button><button type="submit" class="primary">套用設定</button></div>
     </form>
+  </dialog>
+  <dialog id="load-exam-dialog" aria-labelledby="load-exam-title">
+    <form id="load-code-form" class="code-form" novalidate>
+      <div class="dialog-head"><h2 id="load-exam-title">載入考試</h2><button type="button" id="load-code-close" class="icon-button" aria-label="關閉載入考試">×</button></div>
+      <div class="dialog-content"><label>考試代碼<input id="exam-code-input" class="exam-code-input" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="6 碼代碼"></label><div id="exam-code-error" class="form-errors" role="alert" hidden></div></div>
+      <div class="dialog-bottom"><button type="submit" id="load-code-submit" class="primary">載入考試</button></div>
+    </form>
+  </dialog>
+  <dialog id="publish-dialog" aria-labelledby="publish-title">
+    <div class="code-form">
+      <div class="dialog-head"><h2 id="publish-title">預存考試</h2><button type="button" id="publish-close" class="icon-button" aria-label="關閉預存考試">×</button></div>
+      <div class="dialog-content"><p id="prepared-summary"></p><div class="prepared-code"><span>考試代碼</span><strong id="prepared-code"></strong></div><p id="publish-help" class="help"></p><div class="button-row"><a id="publish-github" class="action-link primary" target="_blank" rel="noopener noreferrer">到 GitHub 儲存</a><button type="button" id="prepared-download">下載考試檔</button><button type="button" id="publish-check">確認已發布</button></div><p id="publish-state" class="publish-state" role="status"></p><a id="prepared-link" hidden></a></div>
+    </div>
   </dialog>
   <noscript>請啟用 JavaScript，才能顯示即時時間與考試階段。</noscript>
   <script>/* Pure scheduling logic. No DOM, network, or machine-local timezone dependency. */
@@ -539,6 +561,85 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
   return { MIN, defaults, clone, upgrade, anchors, names, getAnchors, eventName, removeEvent, parseCount, attendanceErrors, editAttendance, makeTemplate, isUnconfigured, shiftStart, parseTime, dayEpoch, schedule, parts, hhmm, timeLabel, tokens, interpolate, phases, stateAt, durationText, validate };
 });
 </script>
+  <script>/* Short codes resolve to static JSON files in this repository; no login secrets. */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./core.js'), require('node:crypto').webcrypto);
+  else root.ExamPresets = factory(root.ExamCore, root.crypto);
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (C, crypto) {
+  'use strict';
+  const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX_BYTES = 1024 * 1024;
+  const PUBLIC_URL = 'https://holonghin.github.io/exam_timer/', REPOSITORY = 'https://github.com/holonghin/exam_timer';
+  const byteLength = text => new TextEncoder().encode(text).length;
+  function normalizeCode(raw) {
+    const code = String(raw).toUpperCase().replace(/[\s-]/g, '');
+    if (!/^[A-HJ-NP-Z2-9]{6}$/.test(code)) throw new Error('請輸入正確的 6 碼考試代碼。');
+    return code;
+  }
+  function requestedCode(base) {
+    const hash = new URL(base).hash.slice(1);
+    if (!hash) return null;
+    try { return decodeURIComponent(hash); } catch { return hash; }
+  }
+  function hostedURL(base) {
+    const url = new URL(base);
+    if (url.protocol === 'file:') return new URL(PUBLIC_URL);
+    if (!['http:', 'https:'].includes(url.protocol)) throw new Error('無法使用這個網址載入考試。');
+    return url;
+  }
+  function dataURL(base, raw) { return new URL('exams/' + normalizeCode(raw) + '.json', hostedURL(base)).href; }
+  function shortURL(base, raw) {
+    const url = hostedURL(base); url.search = ''; url.hash = normalizeCode(raw); return url.href;
+  }
+  function createPreset(config, random = bytes => crypto.getRandomValues(bytes)) {
+    const errors = C.validate(config); if (errors.length) throw new Error(errors.join('\n'));
+    const bytes = random(new Uint8Array(6));
+    const code = Array.from(bytes, n => ALPHABET[n & 31]).join('');
+    const preset = { format: 'exam-timer-preset', version: 1, code, config: C.clone(config) };
+    if (byteLength(JSON.stringify(preset)) > MAX_BYTES) throw new Error('考試設定過長，請減少內容後再預存。');
+    return preset;
+  }
+  function decodePreset(text, expectedCode) {
+    try {
+      if (typeof text !== 'string' || byteLength(text) > MAX_BYTES) throw new Error();
+      const value = JSON.parse(text);
+      if (value.format !== 'exam-timer-preset' || value.version !== 1 || value.code !== normalizeCode(expectedCode)) throw new Error();
+      const config = C.upgrade(value.config); if (C.validate(config).length) throw new Error();
+      return config;
+    } catch { throw new Error('考試檔案格式不正確，請重新預存。'); }
+  }
+  function publication(preset) {
+    const code = normalizeCode(preset.code), contents = JSON.stringify(preset);
+    decodePreset(contents, code);
+    const url = new URL(REPOSITORY + '/new/main');
+    url.searchParams.set('filename', 'exams/' + code + '.json'); url.searchParams.set('value', contents);
+    return { url: url.href.length <= 7600 ? url.href : REPOSITORY + '/upload/main/exams', mode: url.href.length <= 7600 ? 'editor' : 'upload', filename: code + '.json', contents: JSON.stringify(preset, null, 2) };
+  }
+  function canonical(value) {
+    if (Array.isArray(value)) return value.map(canonical);
+    if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
+    return value;
+  }
+  const sameConfig = (a, b) => JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
+  async function load(base, raw, { fetchImpl = globalThis.fetch, timeoutMs = 10000 } = {}) {
+    const code = normalizeCode(raw), url = new URL(dataURL(base, code));
+    // A newly published file must not be masked by a cached 404.
+    url.searchParams.set('v', String(Date.now()));
+    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetchImpl(url.href, { cache: 'no-store', credentials: 'omit', signal: controller.signal });
+      if (response.status === 404) throw new Error('找不到此考試，請檢查代碼或稍後重試。');
+      if (!response.ok) throw new Error('暫時無法載入考試，請稍後重試。');
+      if (Number(response.headers?.get('content-length')) > MAX_BYTES) throw new Error('考試檔案過大，請重新預存。');
+      return decodePreset(await response.text(), code);
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('連線逾時，請再試一次。');
+      if (error instanceof TypeError) throw new Error('無法連線，請檢查網路後再試一次。');
+      throw error;
+    } finally { clearTimeout(timer); }
+  }
+  return { normalizeCode, requestedCode, dataURL, shortURL, createPreset, decodePreset, publication, sameConfig, load };
+});
+</script>
   <script>/* Visual state and cancellable, single-turn animation scheduling; no exam mutations. */
 (function (root, factory) {
   const api = factory();
@@ -615,9 +716,11 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
 </script>
   <script>(() => {
   'use strict';
-  const C = window.ExamCore, $ = id => document.getElementById(id);
+  const C = window.ExamCore, P = window.ExamPresets, $ = id => document.getElementById(id);
   const KEY = 'calculus-exam-timer.v1';
+  const PENDING_KEY = KEY + '.prepared';
   let config = C.clone(C.defaults), draft, configRevision = 0, simulation = null, toastTimer;
+  let preparedExam = null, loadSerial = 0, activeLoad = 0, publishSerial = 0;
   let storageMessage = '設定儲存在此裝置';
   try {
     const saved = localStorage.getItem(KEY);
@@ -851,6 +954,9 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
   $('settings-form').onsubmit = event => {
     event.preventDefault(); const errors = C.validate(draft); if (errors.length) { showErrors(errors); return; }
     config = C.clone(draft); configRevision++; persist(); metadata(); $('settings-dialog').close(); toast(storageMessage);
+    if (P.requestedCode(location.href) !== null) {
+      try { history.replaceState(null, '', location.pathname + location.search); } catch { /* The active settings still apply if history is restricted. */ }
+    }
   };
   function labeled(label, control) { const l = node('label', '', label); l.append(control); return l; }
   function input(value, fn, type = 'text') { const el = node('input'); el.type = type; el.value = value; el.addEventListener('input', () => { fn(type === 'number' ? Number(el.value) : el.value); dirtyNote(); updatePreview(); }); return el; }
@@ -968,6 +1074,89 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
     fillFields(); renderEditors(); updatePreview(); dirtyNote(); showErrors([]);
   }
   document.querySelectorAll('[data-template]').forEach(button => button.onclick = () => loadTemplate(button.dataset.template));
+  function downloadExam(preset) {
+    const file = P.publication(preset), url = URL.createObjectURL(new Blob([file.contents], { type: 'application/json' }));
+    const a = node('a'); a.href = url; a.download = file.filename; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  $('prepare-exam').onclick = () => {
+    if (!P.sameConfig(draft, config)) { showErrors(['請先套用設定，再預存考試。']); return; }
+    try {
+      if (!preparedExam) {
+        try {
+          const saved = JSON.parse(localStorage.getItem(PENDING_KEY));
+          if (saved && P.sameConfig(P.decodePreset(JSON.stringify(saved), saved.code), config)) preparedExam = saved;
+        } catch { /* A previous preparation is optional. */ }
+      }
+      if (!preparedExam || !P.sameConfig(preparedExam.config, config)) preparedExam = P.createPreset(config);
+      try { localStorage.setItem(PENDING_KEY, JSON.stringify(preparedExam)); } catch { /* The open preparation remains usable. */ }
+      const file = P.publication(preparedExam), t = C.schedule(preparedExam.config);
+      $('prepared-code').textContent = preparedExam.code;
+      $('prepared-summary').textContent = config.title + ' ' + config.subtitle + ' · ' + config.date.replaceAll('-', '/') + ' · ' + C.timeLabel(t.start, config.date) + '–' + C.timeLabel(t.end, config.date);
+      $('publish-github').href = file.url;
+      $('publish-help').textContent = file.mode === 'editor' ? '到 GitHub 按「Commit changes」儲存，再回來確認。' : '先下載考試檔，再到 GitHub 上傳至 exams 資料夾並儲存。';
+      $('publish-state').textContent = '尚未確認發布'; $('publish-state').className = 'publish-state';
+      publishSerial++; $('publish-check').disabled = false;
+      $('prepared-link').textContent = ''; $('prepared-link').removeAttribute('href'); $('prepared-link').hidden = true;
+      $('publish-dialog').showModal();
+    } catch (error) { showErrors([error.message]); }
+  };
+  $('prepared-download').onclick = () => downloadExam(preparedExam);
+  $('publish-close').onclick = () => $('publish-dialog').close();
+  $('publish-dialog').addEventListener('close', () => { publishSerial++; $('publish-check').disabled = false; });
+  $('publish-check').onclick = async () => {
+    const preset = preparedExam, button = $('publish-check'), request = ++publishSerial; button.disabled = true;
+    $('publish-state').textContent = '正在確認發布…'; $('publish-state').className = 'publish-state';
+    try {
+      const saved = await P.load(location.href, preset.code);
+      if (request !== publishSerial || !$('publish-dialog').open) return;
+      if (!P.sameConfig(saved, preset.config)) throw new Error('這個代碼的內容不同，請關閉後重新預存。');
+      $('publish-state').textContent = '已可在考場使用'; $('publish-state').className = 'publish-state ready';
+      const link = $('prepared-link'); link.href = P.shortURL(location.href, preset.code); link.textContent = '開啟這場考試'; link.hidden = false;
+    } catch (error) { if (request === publishSerial) { $('publish-state').textContent = error.message; $('publish-state').className = 'publish-state danger'; } }
+    finally { if (request === publishSerial) button.disabled = false; }
+  };
+  function restoreLoadUI() {
+    $('preset-loading').hidden = true; document.querySelector('.app-shell').hidden = false;
+    $('load-code-submit').disabled = false; $('load-code-submit').textContent = '載入考試';
+  }
+  function cancelLoad() { loadSerial++; activeLoad = 0; restoreLoadUI(); }
+  function openCodeDialog(raw = '') {
+    $('exam-code-input').value = String(raw).slice(0, 12); $('exam-code-error').hidden = true;
+    if (!$('load-exam-dialog').open) $('load-exam-dialog').showModal();
+    $('exam-code-input').focus();
+  }
+  $('exam-code-open').onclick = () => openCodeDialog();
+  $('load-code-close').onclick = () => $('load-exam-dialog').close();
+  $('load-exam-dialog').addEventListener('close', () => { if (activeLoad) cancelLoad(); });
+  async function loadExamCode(raw, startup = false) {
+    let code;
+    try { code = P.normalizeCode(raw); }
+    catch (error) {
+      if (startup) openCodeDialog(raw);
+      $('exam-code-error').textContent = error.message; $('exam-code-error').hidden = false; return;
+    }
+    const request = ++loadSerial; activeLoad = request;
+    $('exam-code-error').hidden = true; $('load-code-submit').disabled = true; $('load-code-submit').textContent = '載入中…';
+    if (startup) { document.querySelector('.app-shell').hidden = true; $('preset-loading').hidden = false; }
+    try {
+      const saved = await P.load(location.href, code);
+      if (request !== loadSerial) return;
+      config = saved; configRevision++; stopSimulation(); persist(); metadata();
+      try { history.replaceState(null, '', P.shortURL(location.href, code)); } catch { /* File browsers may restrict history. */ }
+      activeLoad = 0;
+      if ($('load-exam-dialog').open) $('load-exam-dialog').close();
+      if ($('publish-dialog').open) $('publish-dialog').close();
+      if ($('settings-dialog').open) $('settings-dialog').close();
+      toast('已載入考試：' + config.title);
+    } catch (error) {
+      if (request !== loadSerial) return;
+      if (startup) openCodeDialog(code);
+      $('exam-code-error').textContent = error.message; $('exam-code-error').hidden = false;
+    } finally {
+      if (request === loadSerial) { activeLoad = 0; restoreLoadUI(); }
+    }
+  }
+  $('load-code-form').onsubmit = event => { event.preventDefault(); loadExamCode($('exam-code-input').value); };
   $('export-config').onclick = () => {
     const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob), a = node('a'); a.href = url; a.download = 'exam-settings-' + config.date + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -1000,7 +1189,13 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
   // Resolve from absolute time on every tick: background throttling cannot accumulate drift.
   document.addEventListener('visibilitychange', () => { syncMascot(C.schedule(config), now()); if (!document.hidden) render(); });
   window.addEventListener('pageshow', render);
+  window.addEventListener('hashchange', () => {
+    const code = P.requestedCode(location.href);
+    if (code === null) cancelLoad(); else loadExamCode(code, true);
+  });
   metadata(); setInterval(render, 200); requestAnimationFrame(animateScroll);
+  const requested = P.requestedCode(location.href);
+  if (requested !== null) loadExamCode(requested, true);
 })();
 </script>
 </body>

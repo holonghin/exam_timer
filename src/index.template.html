@@ -9,11 +9,12 @@
   <style>/* INLINE_STYLE */</style>
 </head>
 <body>
+  <div id="preset-loading" class="preset-loading" role="status" hidden>正在載入考試…</div>
   <div class="app-shell">
     <header class="topbar">
       <div class="brand"><svg class="brand-bookmark" viewBox="0 0 48 48" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M11 8Q11 5 15 5H30Q34 5 34 9V41L23 34 11 41Z" fill="#c6d9bd" stroke="#819475" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11H28M16 16H25" stroke="#fff9e8" stroke-width="2.5" stroke-linecap="round"/><path d="M35 9Q36 18 44 19Q36 21 35 29Q33 21 26 19Q33 17 35 9Z" fill="#fae8b7" stroke="#c5a97b" stroke-width="1.4" stroke-linejoin="round"/><circle cx="12" cy="31" r="3.4" fill="#edc8b1"/></svg><div><h1><span id="exam-title">微積分1</span><span id="exam-subtitle">期中考試</span></h1></div></div>
       <div class="exam-meta"><span id="exam-date">2026/10/31（六）</span><div class="meta-line"><span id="exam-class">班別：未設定</span><span id="exam-room">考場：未設定</span><span id="exam-teacher">老師：未設定</span></div><div id="exam-statistics" class="meta-line statistics" hidden></div></div>
-      <div class="header-actions"><button id="fullscreen" class="icon-button" aria-label="進入全螢幕" title="全螢幕（F）">⛶</button><button id="settings-open" class="icon-button" aria-label="開啟設定" title="設定">⚙</button></div>
+      <div class="header-actions"><button id="exam-code-open" class="load-exam-button">載入考試</button><button id="fullscreen" class="icon-button" aria-label="進入全螢幕" title="全螢幕（F）">⛶</button><button id="settings-open" class="icon-button" aria-label="開啟設定" title="設定">⚙</button></div>
     </header>
     <div id="simulation-banner" class="simulation-banner" hidden><strong>模擬時間 · 非即時</strong><span id="simulation-summary"></span><button id="sim-pause">暫停</button><button id="sim-exit">回到即時</button></div>
     <main class="layout">
@@ -93,7 +94,7 @@
     <div class="attendance-fields"><label class="check"><input name="showAttendance" type="checkbox">應到、實到與缺考人數</label><div class="attendance-grid"><label>應到人數<input id="attendance-expected" type="text" inputmode="numeric" placeholder="未設定"></label><label>實到人數<input id="attendance-present" type="text" inputmode="numeric" placeholder="未設定"></label><label>缺考人數<input id="attendance-absent" type="text" inputmode="numeric" placeholder="未設定"></label></div><p id="attendance-help" class="help danger" role="status" hidden></p></div>
   </div>
   <div class="settings-block"><h3>吉祥物</h3><label class="check"><input name="mascotVisible" type="checkbox">吉祥物</label><label class="check"><input name="mascotAnimated" type="checkbox">播放動畫</label></div>
-  <div class="settings-block"><h3>畫面與儲存</h3><label class="check"><input name="autoScroll" type="checkbox">內容超出時，緩慢循環上捲</label><label>捲動速度（像素／秒）<input name="scrollSpeed" type="number" min="5" max="40" step="1"></label><div class="button-row"><button type="button" id="export-config">匯出已套用設定</button><button type="button" id="import-config">匯入設定</button><input type="file" id="import-file" accept="application/json,.json" hidden></div></div>
+  <div class="settings-block"><h3>畫面與儲存</h3><label class="check"><input name="autoScroll" type="checkbox">內容超出時，緩慢循環上捲</label><label>捲動速度（像素／秒）<input name="scrollSpeed" type="number" min="5" max="40" step="1"></label><div class="button-row"><button type="button" id="prepare-exam">預存考試</button><button type="button" id="export-config">匯出已套用設定</button><button type="button" id="import-config">匯入設定</button><input type="file" id="import-file" accept="application/json,.json" hidden></div></div>
 </section>
         <section data-panel="schedule" hidden><label class="check"><input name="admissionEnabled" type="checkbox">設定獨立入場時間</label><div class="field-grid">
           <label id="admission-field">開放入場<input name="admission" type="time" step="1"></label><label>考試開始<input name="start" type="time" step="1" required></label>
@@ -114,8 +115,22 @@
       <div class="dialog-bottom"><span id="draft-note"></span><button type="button" id="settings-cancel">取消</button><button type="submit" class="primary">套用設定</button></div>
     </form>
   </dialog>
+  <dialog id="load-exam-dialog" aria-labelledby="load-exam-title">
+    <form id="load-code-form" class="code-form" novalidate>
+      <div class="dialog-head"><h2 id="load-exam-title">載入考試</h2><button type="button" id="load-code-close" class="icon-button" aria-label="關閉載入考試">×</button></div>
+      <div class="dialog-content"><label>考試代碼<input id="exam-code-input" class="exam-code-input" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="6 碼代碼"></label><div id="exam-code-error" class="form-errors" role="alert" hidden></div></div>
+      <div class="dialog-bottom"><button type="submit" id="load-code-submit" class="primary">載入考試</button></div>
+    </form>
+  </dialog>
+  <dialog id="publish-dialog" aria-labelledby="publish-title">
+    <div class="code-form">
+      <div class="dialog-head"><h2 id="publish-title">預存考試</h2><button type="button" id="publish-close" class="icon-button" aria-label="關閉預存考試">×</button></div>
+      <div class="dialog-content"><p id="prepared-summary"></p><div class="prepared-code"><span>考試代碼</span><strong id="prepared-code"></strong></div><p id="publish-help" class="help"></p><div class="button-row"><a id="publish-github" class="action-link primary" target="_blank" rel="noopener noreferrer">到 GitHub 儲存</a><button type="button" id="prepared-download">下載考試檔</button><button type="button" id="publish-check">確認已發布</button></div><p id="publish-state" class="publish-state" role="status"></p><a id="prepared-link" hidden></a></div>
+    </div>
+  </dialog>
   <noscript>請啟用 JavaScript，才能顯示即時時間與考試階段。</noscript>
   <script>/* INLINE_CORE */</script>
+  <script>/* INLINE_PRESETS */</script>
   <script>/* INLINE_MASCOT */</script>
   <script>/* INLINE_APP */</script>
 </body>

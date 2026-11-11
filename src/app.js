@@ -1,8 +1,10 @@
 (() => {
   'use strict';
-  const C = window.ExamCore, $ = id => document.getElementById(id);
+  const C = window.ExamCore, P = window.ExamPresets, $ = id => document.getElementById(id);
   const KEY = 'calculus-exam-timer.v1';
+  const PENDING_KEY = KEY + '.prepared';
   let config = C.clone(C.defaults), draft, configRevision = 0, simulation = null, toastTimer;
+  let preparedExam = null, loadSerial = 0, activeLoad = 0, publishSerial = 0;
   let storageMessage = '設定儲存在此裝置';
   try {
     const saved = localStorage.getItem(KEY);
@@ -236,6 +238,9 @@
   $('settings-form').onsubmit = event => {
     event.preventDefault(); const errors = C.validate(draft); if (errors.length) { showErrors(errors); return; }
     config = C.clone(draft); configRevision++; persist(); metadata(); $('settings-dialog').close(); toast(storageMessage);
+    if (P.requestedCode(location.href) !== null) {
+      try { history.replaceState(null, '', location.pathname + location.search); } catch { /* The active settings still apply if history is restricted. */ }
+    }
   };
   function labeled(label, control) { const l = node('label', '', label); l.append(control); return l; }
   function input(value, fn, type = 'text') { const el = node('input'); el.type = type; el.value = value; el.addEventListener('input', () => { fn(type === 'number' ? Number(el.value) : el.value); dirtyNote(); updatePreview(); }); return el; }
@@ -353,6 +358,89 @@
     fillFields(); renderEditors(); updatePreview(); dirtyNote(); showErrors([]);
   }
   document.querySelectorAll('[data-template]').forEach(button => button.onclick = () => loadTemplate(button.dataset.template));
+  function downloadExam(preset) {
+    const file = P.publication(preset), url = URL.createObjectURL(new Blob([file.contents], { type: 'application/json' }));
+    const a = node('a'); a.href = url; a.download = file.filename; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  $('prepare-exam').onclick = () => {
+    if (!P.sameConfig(draft, config)) { showErrors(['請先套用設定，再預存考試。']); return; }
+    try {
+      if (!preparedExam) {
+        try {
+          const saved = JSON.parse(localStorage.getItem(PENDING_KEY));
+          if (saved && P.sameConfig(P.decodePreset(JSON.stringify(saved), saved.code), config)) preparedExam = saved;
+        } catch { /* A previous preparation is optional. */ }
+      }
+      if (!preparedExam || !P.sameConfig(preparedExam.config, config)) preparedExam = P.createPreset(config);
+      try { localStorage.setItem(PENDING_KEY, JSON.stringify(preparedExam)); } catch { /* The open preparation remains usable. */ }
+      const file = P.publication(preparedExam), t = C.schedule(preparedExam.config);
+      $('prepared-code').textContent = preparedExam.code;
+      $('prepared-summary').textContent = config.title + ' ' + config.subtitle + ' · ' + config.date.replaceAll('-', '/') + ' · ' + C.timeLabel(t.start, config.date) + '–' + C.timeLabel(t.end, config.date);
+      $('publish-github').href = file.url;
+      $('publish-help').textContent = file.mode === 'editor' ? '到 GitHub 按「Commit changes」儲存，再回來確認。' : '先下載考試檔，再到 GitHub 上傳至 exams 資料夾並儲存。';
+      $('publish-state').textContent = '尚未確認發布'; $('publish-state').className = 'publish-state';
+      publishSerial++; $('publish-check').disabled = false;
+      $('prepared-link').textContent = ''; $('prepared-link').removeAttribute('href'); $('prepared-link').hidden = true;
+      $('publish-dialog').showModal();
+    } catch (error) { showErrors([error.message]); }
+  };
+  $('prepared-download').onclick = () => downloadExam(preparedExam);
+  $('publish-close').onclick = () => $('publish-dialog').close();
+  $('publish-dialog').addEventListener('close', () => { publishSerial++; $('publish-check').disabled = false; });
+  $('publish-check').onclick = async () => {
+    const preset = preparedExam, button = $('publish-check'), request = ++publishSerial; button.disabled = true;
+    $('publish-state').textContent = '正在確認發布…'; $('publish-state').className = 'publish-state';
+    try {
+      const saved = await P.load(location.href, preset.code);
+      if (request !== publishSerial || !$('publish-dialog').open) return;
+      if (!P.sameConfig(saved, preset.config)) throw new Error('這個代碼的內容不同，請關閉後重新預存。');
+      $('publish-state').textContent = '已可在考場使用'; $('publish-state').className = 'publish-state ready';
+      const link = $('prepared-link'); link.href = P.shortURL(location.href, preset.code); link.textContent = '開啟這場考試'; link.hidden = false;
+    } catch (error) { if (request === publishSerial) { $('publish-state').textContent = error.message; $('publish-state').className = 'publish-state danger'; } }
+    finally { if (request === publishSerial) button.disabled = false; }
+  };
+  function restoreLoadUI() {
+    $('preset-loading').hidden = true; document.querySelector('.app-shell').hidden = false;
+    $('load-code-submit').disabled = false; $('load-code-submit').textContent = '載入考試';
+  }
+  function cancelLoad() { loadSerial++; activeLoad = 0; restoreLoadUI(); }
+  function openCodeDialog(raw = '') {
+    $('exam-code-input').value = String(raw).slice(0, 12); $('exam-code-error').hidden = true;
+    if (!$('load-exam-dialog').open) $('load-exam-dialog').showModal();
+    $('exam-code-input').focus();
+  }
+  $('exam-code-open').onclick = () => openCodeDialog();
+  $('load-code-close').onclick = () => $('load-exam-dialog').close();
+  $('load-exam-dialog').addEventListener('close', () => { if (activeLoad) cancelLoad(); });
+  async function loadExamCode(raw, startup = false) {
+    let code;
+    try { code = P.normalizeCode(raw); }
+    catch (error) {
+      if (startup) openCodeDialog(raw);
+      $('exam-code-error').textContent = error.message; $('exam-code-error').hidden = false; return;
+    }
+    const request = ++loadSerial; activeLoad = request;
+    $('exam-code-error').hidden = true; $('load-code-submit').disabled = true; $('load-code-submit').textContent = '載入中…';
+    if (startup) { document.querySelector('.app-shell').hidden = true; $('preset-loading').hidden = false; }
+    try {
+      const saved = await P.load(location.href, code);
+      if (request !== loadSerial) return;
+      config = saved; configRevision++; stopSimulation(); persist(); metadata();
+      try { history.replaceState(null, '', P.shortURL(location.href, code)); } catch { /* File browsers may restrict history. */ }
+      activeLoad = 0;
+      if ($('load-exam-dialog').open) $('load-exam-dialog').close();
+      if ($('publish-dialog').open) $('publish-dialog').close();
+      if ($('settings-dialog').open) $('settings-dialog').close();
+      toast('已載入考試：' + config.title);
+    } catch (error) {
+      if (request !== loadSerial) return;
+      if (startup) openCodeDialog(code);
+      $('exam-code-error').textContent = error.message; $('exam-code-error').hidden = false;
+    } finally {
+      if (request === loadSerial) { activeLoad = 0; restoreLoadUI(); }
+    }
+  }
+  $('load-code-form').onsubmit = event => { event.preventDefault(); loadExamCode($('exam-code-input').value); };
   $('export-config').onclick = () => {
     const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob), a = node('a'); a.href = url; a.download = 'exam-settings-' + config.date + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -385,5 +473,11 @@
   // Resolve from absolute time on every tick: background throttling cannot accumulate drift.
   document.addEventListener('visibilitychange', () => { syncMascot(C.schedule(config), now()); if (!document.hidden) render(); });
   window.addEventListener('pageshow', render);
+  window.addEventListener('hashchange', () => {
+    const code = P.requestedCode(location.href);
+    if (code === null) cancelLoad(); else loadExamCode(code, true);
+  });
   metadata(); setInterval(render, 200); requestAnimationFrame(animateScroll);
+  const requested = P.requestedCode(location.href);
+  if (requested !== null) loadExamCode(requested, true);
 })();
