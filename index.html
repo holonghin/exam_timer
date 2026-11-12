@@ -881,7 +881,7 @@ dialog{border:1px solid #dce2d5;border-radius:24px;padding:0;width:min(920px,96v
     const instant = now(), s = C.stateAt(config, instant), p = C.parts(instant);
     syncMascot(s.t, instant);
     $('clock-hm').textContent = C.hhmm(instant); $('clock-sec').textContent = String(p.s).padStart(2, '0');
-    seasonalIcon.update();
+    seasonalIcon.update(C.dayEpoch(config.date));
     $('countdown-label').textContent = s.countdownLabel; $('countdown').textContent = instant >= s.t.end ? '00:00' : C.durationText(s.remaining);
     $('now-marker').style.left = s.progress * 100 + '%'; $('timeline-elapsed').style.width = s.progress * 100 + '%';
     $('timeline').setAttribute('aria-valuenow', Math.round(s.progress * 100));
